@@ -1,0 +1,59 @@
+@font-face {
+    font-family: "Pixel";
+    src: url('fonts/press-start-p2-regular.ttf') format('truetype');
+}
+
+
+body{
+    background-color: rgb(0, 200, 231);
+    margin:0;
+    padding:0;
+}
+
+.container, .start-screen{
+    display: flex;
+    flex-wrap: wrap;
+    font-family: "Pixel", Arial, Helvetica, sans-serif;
+}
+
+.start-screen {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: black;
+    color: white;
+    width: 100vw;
+    height: 100vh;
+}
+
+.title-box {
+    width: 360px;
+    text-align: center;
+}
+
+.title {
+    margin-bottom: 10px;
+}
+
+.game {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 15px;
+}
+
+#play {
+    display: flex;
+    flex-wrap: nowrap;
+    /*visibility: hidden;*/
+}
+
+.top-score {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    color: green;
+    padding: 15px;
+}
