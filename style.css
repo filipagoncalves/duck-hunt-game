@@ -5,7 +5,7 @@
 
 
 body{
-    background-color: rgb(0, 200, 231);
+    background-color: rgb(60 188 252);
     margin:0;
     padding:0;
 }
@@ -14,6 +14,42 @@ body{
     display: flex;
     flex-wrap: wrap;
     font-family: "Pixel", Arial, Helvetica, sans-serif;
+    
+}
+
+.dog {
+    background-image: url('imgs/main-sprite.png');
+    position: absolute;
+    bottom: 100px;
+    left: 50px;
+    z-index: 10;
+    width: 120px;
+    height: 86px;
+    /*animation: initialDog 3s;*/
+}
+
+.duck {
+    background-image: url('imgs/main-sprite.png');
+    background-position-y: -230px;
+    position: absolute;
+    bottom: 100px;
+    left: 500px;
+    z-index: 10;
+    width: 70px;
+    height: 60px;
+    /*animation: initialDog 3s;*/
+}
+
+canvas {
+    position: absolute;
+    z-index: 10;
+}
+
+.scenario img {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    /*left: -100px;*/
 }
 
 .start-screen {
@@ -56,4 +92,21 @@ body{
     justify-content: center;
     color: green;
     padding: 15px;
+}
+
+
+
+@keyframes initialDog {
+    0%  { 
+        transform: translateX(0%);
+        }
+    40%  { 
+        transform: translateX(100%);
+         }
+    70%  { 
+        transform: translateX(100%);
+        }
+    100% { 
+        transform: translateX(200%);
+        }
 }
