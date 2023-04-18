@@ -30,7 +30,7 @@ body{
 
 .duck {
     background-image: url('imgs/main-sprite.png');
-    background-position-y: -230px;
+    background-position: 0px -230px;
     position: absolute;
     bottom: 100px;
     left: 500px;

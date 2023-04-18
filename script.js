@@ -1,7 +1,6 @@
-
-
-
-
+const duck = document.getElementById("duck");
+const windowH = window.innerHeight;
+const windowW = window.innerWidth;
 
 let tID;
 const animateScript = (animal, positionX, positionY, spriteWidth, endPosition, speed) => {
@@ -11,14 +10,74 @@ const animateScript = (animal, positionX, positionY, spriteWidth, endPosition, s
         if (positionX < endPosition) {
             positionX += spriteWidth;
         } else {
-            positionX = spriteWidth;
+            positionX = 0;
         }
     }
     , speed );
 }
 
 //animateScript("dog", 0, 0, 120, 480, 120);
-//animateScript("duck", -10, -230, 80, 170, 300);
+//animateScript("duck", 0, -230, 80, 160, 200); //1a linha
+//animateScript("duck", 0, -300, 80, 160, 200); //2º linha
+//animateScript("duck", 0, -380, 80, 160, 200); //3º linha
+//animateScript("duck", 0, -460, 65, 65, 500); //dying duck
+
+
+
+let duckMooves = [];
+
+const duckInitialPosition = () => {
+    const maxPositionX = windowW - duck.offsetWidth;
+    const positionY = windowW - duck.offsetWidth;
+
+    duck.style.top = positionY;
+    duck.style.left = randomNumber(0, maxPositionX);
+}
+
+const duckPaths = () => {
+
+    
+    
+}
+
+const randomNumber = (min, max) => {
+    Math.random() * (max - min) + min;
+}
+
+
+const move = () => {
+
+    let id = null;
+    const duckX = duck.offsetTop;
+    let pos = duck.offsetTop;
+    clearInterval(id);
+    id = setInterval(frame, 10);
+
+    function frame() {
+        if (pos === windowH - duck.offsetHeight) {
+            clearInterval(id);
+            move();
+        } else {
+            pos++;
+            duck.style.top = pos + 'px';
+            duck.style.left = pos + 'px';
+        }
+    }
+}
+
+const scale = (cardToPlay) => {
+    cardToPlay.animate([
+        {transform: 'scale(1.1)'}
+    ],
+        {
+            duration: 500, easing: 'ease-in-out'
+        }).onfinish = () => {
+            Array.from(playerCards).forEach(element => fadeOut(element));
+        };
+}
+
+
+
 
 //const duck = document.getElementById("duck").y = 600;
 
