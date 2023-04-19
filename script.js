@@ -1,6 +1,22 @@
 const duck = document.getElementById("duck");
 const windowH = window.innerHeight;
 const windowW = window.innerWidth;
+const maxX = windowW - duck.offsetWidth;
+const maxY = windowH - duck.offsetHeight;
+let duckMooves = [];
+
+//startGame();
+
+const startGame = () => {
+
+    console.log("START");
+
+    duckInitialPosition();
+    animateScript("duck", 0, -230, 80, 160, 200);
+    duckAnimation(duckPath(maxX), duckPath(maxY));
+    //move(duckPath(maxY));
+}
+
 
 let tID;
 const animateScript = (animal, positionX, positionY, spriteWidth, endPosition, speed) => {
@@ -24,141 +40,91 @@ const animateScript = (animal, positionX, positionY, spriteWidth, endPosition, s
 
 
 
-let duckMooves = [];
-
 const duckInitialPosition = () => {
     const maxPositionX = windowW - duck.offsetWidth;
-    const positionY = windowW - duck.offsetWidth;
-
-    duck.style.top = positionY;
-    duck.style.left = randomNumber(0, maxPositionX);
+    const positionY = windowH - duck.offsetHeight;
+    
+    duck.style.top = positionY + "px";
+    duck.style.left = randomNumber(0, maxPositionX) + "px";
+    
+    console.log("initial position: " + duck.offsetTop + " " + duck.offsetLeft);
 }
 
-const duckPaths = () => {
-
-    
-    
+const duckPath = (max) => {
+    return randomNumber(0, max);
 }
 
 const randomNumber = (min, max) => {
-    Math.random() * (max - min) + min;
+    return Math.floor(Math.random() * (max - min) + min);
 }
 
 
-const move = () => {
+/*const move = (duckMoove) => {
+
+    let count;
+
+    console.log("Position Y to go: " + duckMoove);
+
+    if (duck.offsetTop >= duckMoove) {
+
+        count = +1;
+
+    } else {count = -1;}
+
+    if (duck.offsetLeft >= duckMoove) {
+
+        count = -1;
+
+    } else {count = +1;}
 
     let id = null;
-    const duckX = duck.offsetTop;
     let pos = duck.offsetTop;
     clearInterval(id);
     id = setInterval(frame, 10);
 
     function frame() {
-        if (pos === windowH - duck.offsetHeight) {
+        //if (pos === windowH - duck.offsetHeight) {
+        if (pos === duckMoove) {
             clearInterval(id);
-            move();
+            move(duckPath(maxY));
         } else {
-            pos++;
+            //pos++;
+            pos += count;
             duck.style.top = pos + 'px';
             duck.style.left = pos + 'px';
         }
     }
+}*/
+
+let animation = null;
+
+const duckAnimation = (valueX, valueY) => {
+
+    const duckX = duck.offsetLeft;
+    const duckY = duck.offsetTop;
+    const distance = Math.floor(Math.sqrt((valueX - duckX) ** 2 + (valueY - duckY) ** 2));
+    const duration = distance / 0.2;
+    
+    console.log(valueX, valueY);
+    checkCoordinates(duckX, valueX);
+    
+    animation = duck.animate([
+        {left: valueX + 'px', top: valueY + 'px'}],
+        {duration: duration});
+        
+    animation.onfinish = () => {
+        duck.style.left = valueX + 'px';
+        duck.style.top = valueY + 'px';
+        duckAnimation(duckPath(window.innerWidth - duckX), duckPath(window.innerHeight - duckY));
+    };
 }
 
-const scale = (cardToPlay) => {
-    cardToPlay.animate([
-        {transform: 'scale(1.1)'}
-    ],
-        {
-            duration: 500, easing: 'ease-in-out'
-        }).onfinish = () => {
-            Array.from(playerCards).forEach(element => fadeOut(element));
-        };
+const stopAnimation = () => {
+    animation.pause();
+    clearInterval(tID);
+    animateScript("duck", 0, -460, 65, 65, 500);
 }
 
-
-
-
-//const duck = document.getElementById("duck").y = 600;
-
-
-
-
-/*const SPRITE_WIDTH = 120;
-const SPRITE_HEIGHT = 86;
-const BORDER_WIDTH = 1;
-const SPACING_WIDTH = 1;
-
-function spritePositionToImagePosition(row, col) {
-    return {
-        x: (
-            BORDER_WIDTH +
-            col * (SPACING_WIDTH + SPRITE_WIDTH)
-        ),
-        y: (
-            BORDER_WIDTH +
-            row * (SPACING_WIDTH + SPRITE_HEIGHT)
-        )
-    }
+const checkCoordinates = (initialX, finalX) => {
+    initialX < finalX ? duck.style.transform = 'scaleX(1)': duck.style.transform = 'scaleX(-1)';     
 }
-
-var canvas = document.getElementById('dog');
-var context = canvas.getContext('2d');
-
-var spriteSheetURL = 'imgs/main-sprite.png';
-var image = new Image();
-image.src = spriteSheetURL;
-image.crossOrigin = true;
-
-// extract all of our frames
-var karelright0 = spritePositionToImagePosition(0, 0);
-var karelright1 = spritePositionToImagePosition(0, 1);
-var karelright2 = spritePositionToImagePosition(0, 2);
-var karelleftt0 = spritePositionToImagePosition(0, 3);
-var karelleft1 = spritePositionToImagePosition(0, 4);
-var karelleft2 = spritePositionToImagePosition(0, 5);
-var karelleft2 = spritePositionToImagePosition(0, 5);
-var karelleft2 = spritePositionToImagePosition(0, 5);
-var karelleft2 = spritePositionToImagePosition(0, 5);
-var karelleft2 = spritePositionToImagePosition(0, 5);
-var karelleft2 = spritePositionToImagePosition(0, 5);
-
-var walkCycle = [
-    karelright0,
-    karelright1,
-    karelright2,
-    karelright1
-];
-
-var frameIndex = 0;
-var frame;
-function animate() {
-    // once we hit the end of the cycle,
-    // start again
-    if (frameIndex === walkCycle.length) {
-        frameIndex = 0;
-    }
-    frame = walkCycle[frameIndex];
-    context.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-    context.drawImage(
-        image,
-        frame.x,
-        frame.y,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT,
-        0,
-        0,
-        SPRITE_WIDTH,
-        SPRITE_HEIGHT
-    );
-    frameIndex += 1;
-}
-
-image.onload = function() {
-    setInterval(animate, 250);
-};*/

@@ -15,10 +15,10 @@
 
         <canvas id="duck" width="120" height="86">
         </canvas>-->
-        <div id="dog" class="dog"></div>
-        <div id="duck" class="duck" onclick="move()"></div>
+        <div id="dog" class="dog" onclick="startGame()"></div>
+        <div id="duck" class="duck" onclick="stopAnimation()"></div>
         <div class="scenario">
-            <img src="imgs/stage.png" alt="stage" />
+            <img src="imgs/stage-wb.png" alt="stage" />
         </div>
 
         
@@ -29,11 +29,11 @@
             <div class="title">
                 <img src="imgs/duck_hunt_logo.png" alt="Duck Hunt" width="360"/>
             </div>
-            <div class="game" onclick="playGame()">
+            <div class="game" onclick="starGame()">
                 <div id="play">&#9654;<div>&nbsp;GAME A</div></div>
                 <div>1 DUCK</div>
             </div>
-            <div class="game" onclick="playGame()">
+            <div class="game" onclick="starGame()">
                 <div id="play">&#9654;<div>&nbsp;GAME B</div></div>
                 <div>2 DUCK</div>
             </div>
