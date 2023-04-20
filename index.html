@@ -10,18 +10,51 @@
 <body>
 
     <main class="container">
-        <!-- <canvas id="dog" width="120" height="86">
-        </canvas> 
-
-        <canvas id="duck" width="120" height="86">
-        </canvas>-->
         <div id="dog" class="dog" onclick="startGame()"></div>
-        <div id="duck" class="duck" onclick="stopAnimation()"></div>
+<!--         <div id="duck" class="duck" onclick="stopAnimation()"></div>
+ -->        <div id="duck" class="duck"></div>
+
+        <div class="gamePanel">
+            <div class="scores-box">
+                <div class="rounds">
+                    <div>R = <span id="roundNr">1</span></div>
+                </div>
+                <div class="player-box">
+                    <div class="shot-box box">
+                        <div id="shots">
+                            <div class="shot"></div>
+                            <div class="shot"></div>
+                            <div class="shot"></div>
+                        </div>
+                        <div>SHOT</div>
+                    </div>
+                    <div class="hit-box box">
+                        <div id="ducks">
+                            <div class="hit">HIT&nbsp;</div>
+                            <div class="thumbDuck"></div>
+                            <div class="thumbDuck"></div>
+                            <div class="thumbDuck"></div>
+                            <div class="thumbDuck"></div>
+                            <div class="thumbDuck"></div>
+                            <div class="thumbDuck"></div>
+                            <div class="thumbDuck"></div>
+                            <div class="thumbDuck"></div>
+                            <div class="thumbDuck"></div>
+                            <div class="thumbDuck"></div>
+                            <div class="thumbDuck"></div>
+                        </div>
+                        <div>||||||||||||||</div>
+                    </div>
+                    <div class="score-box box">
+                        <div id="score">000000</div>
+                        <div>SCORE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="scenario">
             <img src="imgs/stage-wb.png" alt="stage" />
         </div>
-
-        
     </main>
 
     <div class="start-screen">
@@ -30,16 +63,22 @@
                 <img src="imgs/duck_hunt_logo.png" alt="Duck Hunt" width="360"/>
             </div>
             <div class="game" onclick="starGame()">
-                <div id="play">&#9654;<div>&nbsp;GAME A</div></div>
+                <div>
+                    <div id="play">&#9654;</div>
+                    <div>&nbsp;GAME A</div>
+                </div>
                 <div>1 DUCK</div>
             </div>
             <div class="game" onclick="starGame()">
-                <div id="play">&#9654;<div>&nbsp;GAME B</div></div>
+                <div>
+                    <div id="play">&#9654;</div>
+                    <div>&nbsp;GAME B</div>
+                </div>
                 <div>2 DUCK</div>
             </div>
             <div class="top-score">
-                <div>TOP SCORE: </div>
-                <div id="total-score">00000</div>
+                <div>TOP SCORE:</div>
+                <div id="total-score">000000</div>
             </div>
         </div>
     </div>

@@ -18,6 +18,139 @@ body{
     
 }
 
+.scenario img {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    /*left: -100px;*/
+}
+
+.start-screen {
+    z-index: 10;
+    position: fixed;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: black;
+    color: white;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.title-box {
+    width: 360px;
+    text-align: center;
+}
+
+.title {
+    margin-bottom: 10px;
+}
+
+.game {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 15px;
+}
+
+.game > div {
+    display: flex;
+}
+
+#play {
+    display: flex;
+    flex-wrap: nowrap;
+    /*visibility: hidden;*/
+    animation: blink 1s infinite;
+}
+
+.top-score {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    color: green;
+    padding: 15px;
+}
+
+.gamePanel {
+    z-index: 2;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    bottom: 2%;
+    width: 100%;
+}
+
+.scores-box {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: fit-content;
+}
+
+.rounds {
+    display: flex;
+    height: auto;
+    background-color: black;
+    color: white;
+    width: fit-content;
+    align-self: flex-start;
+}
+
+.player-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+    gap: 25px;
+    color: white;
+}
+
+.box {
+    background-color: black;
+    border: 3px solid greenyellow;
+    border-radius: 10px;
+}
+
+.box > div {
+    padding: 6px;
+}
+
+.shot-box {
+    color: cyan;
+}
+
+#shots {
+    display: flex;
+}
+
+.shot {
+    background-image: url('imgs/main-sprite.png');
+    background-position: 0px 582px;
+    width: 20px;
+    height: 20px;
+}
+
+#ducks {
+    display: flex;
+    color: greenyellow;
+    font-size: 20px;
+}
+
+.thumbDuck {
+    background-image: url('imgs/main-sprite.png');
+    background-position: -54px 582px;
+    width: 20px;
+    height: 20px;
+    padding-left: 2px;
+}
+
+.score-box {
+    font-size: 20px;
+}
+
 .dog {
     background-image: url('imgs/main-sprite.png');
     position: absolute;
@@ -38,64 +171,16 @@ body{
     z-index: 10;
     width: 70px;
     height: 60px;
-    /*animation: initialDog 3s;*/
 }
 
-canvas {
-    position: absolute;
-    z-index: 10;
+.blink {
+    animation: blink 1s infinite;
 }
 
-.scenario img {
-    width: 100%;
-    position: fixed;
-    bottom: 0;
-    /*left: -100px;*/
+@keyframes blink {
+    from { opacity: 1; }
+	to { opacity: 0; }
 }
-
-.start-screen {
-    display: none;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    background-color: black;
-    color: white;
-    width: 100vw;
-    height: 100vh;
-}
-
-.title-box {
-    width: 360px;
-    text-align: center;
-}
-
-.title {
-    margin-bottom: 10px;
-}
-
-.game {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    cursor: pointer;
-    padding: 15px;
-}
-
-#play {
-    display: flex;
-    flex-wrap: nowrap;
-    /*visibility: hidden;*/
-}
-
-.top-score {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: center;
-    color: green;
-    padding: 15px;
-}
-
-
 
 @keyframes initialDog {
     0%  { 
