@@ -5,6 +5,7 @@
 
 
 body{
+    cursor: url('imgs/gun-pointer.png') 10 10, pointer;
     background-color: rgb(60 188 252);
     margin:0;
     padding:0;
@@ -29,7 +30,6 @@ body{
 }
 
 .duck {
-    cursor: url('imgs/gun-pointer.png') 10 10, pointer;
     background-image: url('imgs/main-sprite.png');
     background-position: 0px -230px;
     position: absolute;

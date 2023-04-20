@@ -5,16 +5,62 @@ const maxX = windowW - duck.offsetWidth;
 const maxY = windowH - duck.offsetHeight;
 let duckMooves = [];
 
-//startGame();
-
 const startGame = () => {
 
-    console.log("START");
+    animateDog();
+    createDuck();
 
+    
+    //move(duckPath(maxY));
+}
+
+const gameLogic = () => {
+    
+}
+
+const createDuck = () => {
     duckInitialPosition();
     animateScript("duck", 0, -230, 80, 160, 200);
     duckAnimation(duckPath(maxX), duckPath(maxY));
-    //move(duckPath(maxY));
+}
+
+let dogAnim;
+let countMoove = 0;
+const dogIntroAnim = (animal, positionX, positionY, spriteWidth, endPosition, speed) => {
+    
+    dogAnim = setInterval ( () => {
+        document.getElementById(animal).style.backgroundPosition = `-${positionX}px ${positionY}px`; 
+        if (positionX < endPosition) {
+            positionX += spriteWidth;
+            countMoove++;
+        } else {
+            positionX = 0;
+        }
+    }
+    , speed );
+}
+
+//dogIntroAnim("dog", 0, 0, 120, 480, 120);
+
+const dogAnimation = (valueX, valueY) => {
+
+    const duckX = duck.offsetLeft;
+    const duckY = duck.offsetTop;
+    const distance = Math.floor(Math.sqrt((valueX - duckX) ** 2 + (valueY - duckY) ** 2));
+    const duration = distance / 0.2;
+    
+    console.log(valueX, valueY);
+    checkCoordinates(duckX, valueX);
+    
+    animation = duck.animate([
+        {left: valueX + 'px', top: valueY + 'px'}],
+        {duration: duration});
+        
+    animation.onfinish = () => {
+        duck.style.left = valueX + 'px';
+        duck.style.top = valueY + 'px';
+        duckAnimation(duckPath(window.innerWidth - duckX), duckPath(window.innerHeight - duckY));
+    };
 }
 
 
@@ -122,7 +168,11 @@ const duckAnimation = (valueX, valueY) => {
 const stopAnimation = () => {
     animation.pause();
     clearInterval(tID);
-    animateScript("duck", 0, -460, 65, 65, 500);
+
+    duck.style.backgroundPosition = '0px -460px'; 
+
+    //animateScript("duck", 0, -460, 65, 65, 500);
+    duckAnimation(duck.offsetLeft, window.innerHeight);
 }
 
 const checkCoordinates = (initialX, finalX) => {
