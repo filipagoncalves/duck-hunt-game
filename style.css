@@ -3,7 +3,6 @@
     src: url('fonts/press-start-p2-regular.ttf') format('truetype');
 }
 
-
 body{
     cursor: url('imgs/gun-pointer.png') 10 10, pointer;
     background-color: rgb(60 188 252);
@@ -15,7 +14,6 @@ body{
     display: flex;
     flex-wrap: wrap;
     font-family: "Pixel", Arial, Helvetica, sans-serif;
-    
 }
 
 .scenario img {
@@ -25,7 +23,7 @@ body{
     /*left: -100px;*/
 }
 
-.start-screen {
+.start-screen, #game-over, #end-round {
     z-index: 10;
     position: fixed;
     display: none;
@@ -37,6 +35,27 @@ body{
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+}
+
+#game-over {
+    display: flex;
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, 0.3);
+    font-size: 200%;
+}
+
+#end-round {
+    visibility: hidden;
+    display: flex;
+    background-color: transparent;
+    font-size: 20px;
+    text-align: center;
+    top: -20%;
+}
+
+.round-box {
+    padding: 15px;
+    border-color: white;
 }
 
 .title-box {
@@ -149,6 +168,7 @@ body{
 
 .score-box {
     font-size: 20px;
+    text-align: right;
 }
 
 .dog {
@@ -175,6 +195,14 @@ body{
 
 .blink {
     animation: blink 1s infinite;
+}
+
+#main-score {
+    z-index: 5;
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    visibility: hidden;
 }
 
 @keyframes blink {

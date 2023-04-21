@@ -1,25 +1,321 @@
-const duck = document.getElementById("duck");
+const main = document.getElementById("main");
+const mainScore = document.getElementById("main-score");
+const scoreDiv = document.getElementById("score");
+const endRoundDiv = document.getElementById("end-round");
+const roundDiv = document.getElementById("round");
+const dogDiv = document.getElementById("dog");
+
 const windowH = window.innerHeight;
 const windowW = window.innerWidth;
-const maxX = windowW - duck.offsetWidth;
-const maxY = windowH - duck.offsetHeight;
+
 let mouseX, mouseY = 0;
 let bullet, miniDuck = null;
-const scoreValues = [500, 1000, 1500];
-const duckIsDead = false;
+const scoreValues = [500, 1000, 1500, 2000, 2500, 3000];
+let duckIsDead = false;
+let nrBullets = 3;
+let shotDuck = false;
+let duckShoted = 2;
+let ducksKilled = 0;
+let newDuck = null;
+
+let maxX, maxY = 0;
+
+let round = 1;
+let score = 000000;
+
+
+
+
+const startGame1 = async () => {
+
+    const dog = Dog();
+    const duckD = Duck();
+    const game = GameLogic();
+    const uiRender = Interface();
+
+    await animateDog();
+    await duckD.create();
+    gameLogic();
+
+    game.verifyShot();
+}
 
 const startGame = async () => {
 
-    await animateDog();
-    await createDuck();
-    gameLogic();
+    const dog = Dog();
+    const uiRender = Interface();
+    const duck = Duck(uiRender);
+    const game = GameLogic(uiRender, duck);
 
-    verifyShot();
+    await animateDog();
+    await duck.create();
+    game.verifyShot();
 }
 
-const gameLogic = () => {
+const Duck = (uiRender) => {
 
-    /*while(true){
+    let animation = null;
+    
+    return ({
+
+        create : function() {
+            newDuck = document.createElement("div");
+            newDuck.id = "duck";
+            newDuck.classList.add("duck");
+
+            maxX = windowW - 70;
+            maxY = windowH - 60;
+
+            main.appendChild(newDuck);
+            this.initialPosition();
+
+            animateSprite("duck", 0, -230, 80, 160, 200);
+            this.animation(this.path(maxX), this.path(maxY));
+        
+            return new Promise((resolve) => {
+                console.log("second");
+                resolve();
+            });
+        },
+
+        initialPosition : function () {
+            const maxPositionX = windowW - newDuck.offsetWidth;
+            const positionY = windowH - newDuck.offsetHeight;
+            
+            newDuck.style.top = positionY + "px";
+            newDuck.style.left = randomNumber(0, maxPositionX) + "px";
+            
+            console.log("initial position: " + newDuck.offsetTop + " " + newDuck.offsetLeft);
+        },
+
+        checkCoordinates : function(duck, initialX, finalX) {
+            initialX < finalX ? duck.style.transform = 'scaleX(1)': duck.style.transform = 'scaleX(-1)';     
+        },
+
+        path : (max) => randomNumber(0, max),
+
+        animation : function(valueX, valueY) {
+
+            const duckX = newDuck.offsetLeft;
+            const duckY = newDuck.offsetTop;
+            const distance = Math.floor(Math.sqrt((valueX - duckX) ** 2 + (valueY - duckY) ** 2));
+            const duration = distance / 0.2;
+            
+            console.log(valueX, valueY);
+            this.checkCoordinates(duck, duckX, valueX);
+            
+            animation = newDuck.animate([
+                {left: valueX + 'px', top: valueY + 'px'}],
+                {duration: duration});
+                
+            animation.onfinish = () => {
+                newDuck.style.left = valueX + 'px';
+                newDuck.style.top = valueY + 'px';
+                this.animation(this.path(window.innerWidth - duckX), this.path(window.innerHeight - duckY));
+            };
+        },
+
+        stopAnimation : function() {
+            animation.pause();
+            clearInterval(tID);
+            this.fallingAnimation();
+        },
+        
+        fallingAnimation : function() {
+        
+            let endDuck = setInterval ( () => {
+        
+                newDuck.style.backgroundPosition = '-100px -460px';
+                newDuck.style.width = '35px';
+                this.shotedAnimation();
+
+                console.log(maxY);
+        
+                newDuck.animate([
+                    {top: maxY + 'px'}],
+                    {
+                        duration: 1000
+                    }).onfinish = () => {
+                        duckIsDead = true;
+                        newDuck.remove();
+                        uiRender.hideScore();
+                        uiRender.showDog(655, 5);        
+                };
+                clearInterval(endDuck);
+            }, 1000 );
+            
+            newDuck.style.backgroundPosition = '0px -460px';
+        },
+
+        shotedAnimation : function() {
+        
+            let anim = setInterval ( () => {
+                if(duckIsDead){
+                    clearInterval(anim);
+                } else {
+                    newDuck.style.transform === 'scaleX(1)' ? newDuck.style.transform = 'scaleX(-1)' : newDuck.style.transform = 'scaleX(1)';
+                }
+            }, 200 );
+        }
+
+    })
+}
+
+const Dog = () => {
+
+    return ({
+        create : function() {
+            console.log('Using closure :)');
+        },
+
+    })
+}
+
+const GameLogic = (uiRender, duck) => {
+
+    /*while(ducksKilled < 11) {
+
+    }*/
+
+    return ({
+        verifyShot : function() {
+                
+            uiRender.removeBullet();
+            uiRender.blinkDuck();
+            
+            document.addEventListener('click', (event) => {
+                const elementRect = newDuck.getBoundingClientRect();
+                
+                // check if the mouse coordinates are within the element's rectangle
+                if (event.clientX >= elementRect.left && event.clientX <= elementRect.right
+                    && event.clientY >= elementRect.top && event.clientY <= elementRect.bottom) {
+                    console.log('You killed a duck!');
+                    
+                    duck.stopAnimation();
+                    uiRender.miniDuckPosition();
+                    uiRender.showBullet();
+                    uiRender.showScore(elementRect.top, elementRect.left);
+                    shotDuck = true;
+                    ducksKilled++;
+
+                } else {
+                    nrBullets--;
+                    shotDuck = false;
+                    console.log('You missed!');
+                }
+
+                uiRender.removeBlinkDuck();
+                duckShoted++;
+                round++;
+
+                if (this.verifyBullets()) {
+                    this.gameOver();
+                };
+
+                if (this.checkLevelResult()) {
+                    uiRender.showRoundBox();
+                };
+            });
+        },
+
+        verifyBullets : function() {
+            nrBullets === 0 ? false : true;
+        },
+
+        checkLevelResult : function() {
+            return ducksKilled === 10;
+        },
+
+        gameOver : function() {
+            gameOverBox.style.visibility = 'visible';
+        }
+
+        
+    })
+}
+
+const Interface = () => {
+
+    return ({
+        removeBullet : function() {
+            bullet = document.querySelector("#shots :nth-child(" + nrBullets + ")");
+            bullet.style.visibility = "hidden";
+        },
+        
+        showBullet : function() {
+            bullet = document.querySelector("#shots :nth-child(" + nrBullets + ")");
+            bullet.style.visibility = "visible";
+        },
+        
+        blinkDuck : function() {
+            miniDuck = document.querySelector("#ducks :nth-child(" + duckShoted + ")");
+            miniDuck.classList.add('blink');
+        },
+        
+        removeBlinkDuck : function() {
+            miniDuck = document.querySelector("#ducks :nth-child(" + duckShoted + ")");
+            miniDuck.classList.remove('blink');
+        },
+        
+        miniDuckPosition : function() {
+            miniDuck = document.querySelector("#ducks :nth-child(" + duckShoted + ")");
+            miniDuck.style.backgroundPosition = "-27px 582px";
+        },
+
+        showScore : function(x, y) {
+            mainScore.style.visibility = 'visible';
+            mainScore.style.top = x + 'px';
+            mainScore.style.left = (y - 40) + 'px';
+
+            mainScore.innerHTML = scoreValues[round];
+            scoreDiv.innerHTML = score + scoreValues[round];
+        },
+
+        hideScore : function() {
+            mainScore.style.visibility = 'hidden';
+        },
+
+        showRoundBox : function () {
+            roundDiv.innerHTML = round;
+
+            let show = setInterval ( () => {
+                endRoundDiv.style.visibility = 'visible';
+                clearInterval(show);
+            }, 2000 );
+
+            let hide = setInterval ( () => {
+                endRoundDiv.style.visibility = 'hidden';
+                clearInterval(hide);
+            }, 4000 );
+        },
+
+        showDog : function(spriteX, spriteY) {
+            dogDiv.style.backgroundPosition = `-${spriteX}px ${spriteY}px`;
+            dogDiv.style.left = newDuck.offsetLeft + 'px';
+            dogDiv.style.bottom = '10%';
+            dogDiv.style.width = '90px';
+
+            dogDiv.animate([
+                {bottom: '30%'}],
+                {duration: 1000
+                }).onfinish = () => {
+                    dogDiv.style.bottom = '30%';
+                    dogDiv.animate([
+                        {bottom: '10%'}],
+                        {duration: 500, delay: 2000
+                        }).onfinish = () => {
+                            dogDiv.style.visibility = 'hidden';
+                        }
+                };
+        }
+    })
+}
+
+
+
+/*const gameLogic = (uiRender) => {
+
+    while(true){
         //verificar se um pato foi morto
         verifyShot();
        
@@ -30,97 +326,19 @@ const gameLogic = () => {
     }
 
     createDuck();
-    gameOver();*/
-}
-
-
-
-let nrBullets = 3;
-let shotDuck = false;
-let duckShoted = 1;
-
-const verifyShot = () => {
-
-    console.log("let's kill some ducks");    
-
-    // listen for clicks on the document
-    document.addEventListener('click', (event) => {
-        
-        const elementRect = duck.getBoundingClientRect();
-        removeBullet();
-   
-        // check if the mouse coordinates are within the element's rectangle
-        if (event.clientX >= elementRect.left && event.clientX <= elementRect.right
-            && event.clientY >= elementRect.top && event.clientY <= elementRect.bottom) {
-            // the mouse was clicked within the element's rectangle
-            console.log('You killed a duck!');
-            
-            stopAnimation();
-            shotDuck = true;
-        } else {
-            nrBullets--;
-            shotDuck = false;
-            console.log('You missed!');
-        }
-    });
-    
-}
-//verifyShoot();
-
-const verifyBullets = () => nrBullets === 0 ? false : true;
-
-const removeBullet = () => {
-    bullet = document.querySelector("#shots :nth-child(" + nrBullets + ")");
-    bullet.style.visibility = "hidden";
-}
-
-const showBullet = () => {
-    bullet = document.querySelector("#shots :nth-child(" + nrBullets + ")");
-    bullet.style.visibility = "visible";
-}
-
-const blinkDuck = () => {
-    miniDuck = document.querySelector("#ducks :nth-child(" + duckShoted + ")");
-    miniDuck.classList.add('blink');
-}
-
-const removeBlinkDuck = () => {
-    miniDuck = document.querySelector("#ducks :nth-child(" + duckShoted + ")");
-    miniDuck.classList.remove('blink');
-}
-
-const miniDuckPosition = () => {
-    miniDuck = document.querySelector("#ducks :nth-child(" + duckShoted + ")");
-    miniDuck.style.backgroundPosition = "-27px 582px";
-}
-
-
-/*window.addEventListener('click', (event) => {
-    mousePos = { x: event.clientX, y: event.clientY };
-    console.log(mousePos);
-});*/
-
-
-
-const createDuck = () => {
-
-    
-    duckInitialPosition();
-    animateScript("duck", 0, -230, 80, 160, 200);
-    duckAnimation(duckPath(maxX), duckPath(maxY));
-
-    return new Promise((resolve) => {
-        console.log("second");
-        resolve();
-      });
-}
+    gameOver();
+}*/
 
 
 const animateDog = () => {
 
     return new Promise((resolve) => {
         console.log("1st");
-        resolve();
+        let hide = setInterval ( () => {
+            endRoundDiv.style.visibility = 'hidden';
+            clearInterval(hide);resolve();
+        }, 4000 );
+        
       });
 
     //console.log("Dog has been created!");
@@ -167,7 +385,7 @@ const dogAnimation = (valueX, valueY) => {
 
 
 let tID;
-const animateScript = (animal, positionX, positionY, spriteWidth, endPosition, speed) => {
+const animateSprite = (animal, positionX, positionY, spriteWidth, endPosition, speed) => {
     
     tID = setInterval ( () => {
         document.getElementById(animal).style.backgroundPosition = `-${positionX}px ${positionY}px`; 
@@ -186,132 +404,6 @@ const animateScript = (animal, positionX, positionY, spriteWidth, endPosition, s
 //animateScript("duck", 0, -380, 80, 160, 200); //3º linha
 //animateScript("duck", 0, -460, 65, 65, 500); //dying duck
 
-
-
-const duckInitialPosition = () => {
-    const maxPositionX = windowW - duck.offsetWidth;
-    const positionY = windowH - duck.offsetHeight;
-    
-    duck.style.top = positionY + "px";
-    duck.style.left = randomNumber(0, maxPositionX) + "px";
-    
-    console.log("initial position: " + duck.offsetTop + " " + duck.offsetLeft);
-}
-
-const duckPath = (max) => {
-    return randomNumber(0, max);
-}
-
 const randomNumber = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
-}
-
-
-/*const move = (duckMoove) => {
-
-    let count;
-
-    console.log("Position Y to go: " + duckMoove);
-
-    if (duck.offsetTop >= duckMoove) {
-
-        count = +1;
-
-    } else {count = -1;}
-
-    if (duck.offsetLeft >= duckMoove) {
-
-        count = -1;
-
-    } else {count = +1;}
-
-    let id = null;
-    let pos = duck.offsetTop;
-    clearInterval(id);
-    id = setInterval(frame, 10);
-
-    function frame() {
-        //if (pos === windowH - duck.offsetHeight) {
-        if (pos === duckMoove) {
-            clearInterval(id);
-            move(duckPath(maxY));
-        } else {
-            //pos++;
-            pos += count;
-            duck.style.top = pos + 'px';
-            duck.style.left = pos + 'px';
-        }
-    }
-}*/
-
-let animation = null;
-
-const duckAnimation = (valueX, valueY) => {
-
-    const duckX = duck.offsetLeft;
-    const duckY = duck.offsetTop;
-    const distance = Math.floor(Math.sqrt((valueX - duckX) ** 2 + (valueY - duckY) ** 2));
-    const duration = distance / 0.2;
-    
-    console.log(valueX, valueY);
-    checkCoordinates(duckX, valueX);
-    
-    animation = duck.animate([
-        {left: valueX + 'px', top: valueY + 'px'}],
-        {duration: duration});
-        
-    animation.onfinish = () => {
-        duck.style.left = valueX + 'px';
-        duck.style.top = valueY + 'px';
-        duckAnimation(duckPath(window.innerWidth - duckX), duckPath(window.innerHeight - duckY));
-    };
-}
-
-const stopAnimation = () => {
-    animation.pause();
-    clearInterval(tID);
-    fallingDuckAnimation();
-}
-
-const fallingDuckAnimation = () => {
-
-    let endDuck = setInterval ( () => {
-
-        duck.style.backgroundPosition = '-100px -460px';
-        duck.style.width = '35px';
-        shotedDuckAnimation();
-
-        duck.animate([
-            {top: window.innerHeight + 'px'}],
-            {
-                duration: 1000
-            }).onfinish = () => {
-                duckIsDead = true;
-                duck.remove();
-                //cão aparece com o pato
-
-        };
-        clearInterval(endDuck);
-    }
-    , 1000 );
-    
-    duck.style.backgroundPosition = '0px -460px';
-}
-
-
-let shotAnimation = null;
-const shotedDuckAnimation = () => {
-
-    let anim = setInterval ( () => {
-        if(duckIsDead){
-            clearInterval(anim);
-        } else {
-            duck.style.transform === 'scaleX(1)' ? duck.style.transform = 'scaleX(-1)' : duck.style.transform = 'scaleX(1)';
-        }
-    }
-    , 200 );
-}
-
-const checkCoordinates = (initialX, finalX) => {
-    initialX < finalX ? duck.style.transform = 'scaleX(1)': duck.style.transform = 'scaleX(-1)';     
 }
