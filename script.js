@@ -1,14 +1,15 @@
+const body = document.body;
 const main = document.getElementById("main");
 const mainScore = document.getElementById("main-score");
+const startScreen = document.getElementById("start-screen");
 const scoreDiv = document.getElementById("score");
 const endRoundDiv = document.getElementById("end-round");
 const roundDiv = document.getElementById("round");
+const gameOverDiv = document.getElementById("game-over");
 const dogDiv = document.getElementById("dog");
 
-const windowH = window.innerHeight;
-const windowW = window.innerWidth;
-
 let mouseX, mouseY = 0;
+
 let bullet, miniDuck = null;
 const scoreValues = [500, 1000, 1500, 2000, 2500, 3000];
 let duckIsDead = false;
@@ -23,7 +24,9 @@ let maxX, maxY = 0;
 let round = 1;
 let score = 000000;
 
-
+document.addEventListener('mousemove', (event) => {
+    //console.log(event.clientX, event.clientY);
+});
 
 
 const startGame1 = async () => {
@@ -47,6 +50,9 @@ const startGame = async () => {
     const duck = Duck(uiRender);
     const game = GameLogic(uiRender, duck);
 
+    body.style.cursor = 'url("imgs/gun-pointer.png") 10 10, pointer';
+    startScreen.style.display = 'none';
+
     await animateDog();
     await duck.create();
     game.verifyShot();
@@ -63,8 +69,8 @@ const Duck = (uiRender) => {
             newDuck.id = "duck";
             newDuck.classList.add("duck");
 
-            maxX = windowW - 70;
-            maxY = windowH - 60;
+            maxX = window.innerWidth - 70;
+            maxY = window.innerHeight - 120;
 
             main.appendChild(newDuck);
             this.initialPosition();
@@ -79,17 +85,10 @@ const Duck = (uiRender) => {
         },
 
         initialPosition : function () {
-            const maxPositionX = windowW - newDuck.offsetWidth;
-            const positionY = windowH - newDuck.offsetHeight;
+            const maxPositionX = window.innerWidth - newDuck.offsetWidth;
             
-            newDuck.style.top = positionY + "px";
+            newDuck.style.top = '80%';
             newDuck.style.left = randomNumber(0, maxPositionX) + "px";
-            
-            console.log("initial position: " + newDuck.offsetTop + " " + newDuck.offsetLeft);
-        },
-
-        checkCoordinates : function(duck, initialX, finalX) {
-            initialX < finalX ? duck.style.transform = 'scaleX(1)': duck.style.transform = 'scaleX(-1)';     
         },
 
         path : (max) => randomNumber(0, max),
@@ -101,7 +100,6 @@ const Duck = (uiRender) => {
             const distance = Math.floor(Math.sqrt((valueX - duckX) ** 2 + (valueY - duckY) ** 2));
             const duration = distance / 0.2;
             
-            console.log(valueX, valueY);
             this.checkCoordinates(duck, duckX, valueX);
             
             animation = newDuck.animate([
@@ -115,6 +113,10 @@ const Duck = (uiRender) => {
             };
         },
 
+        checkCoordinates : function(duck, initialX, finalX) {
+            initialX < finalX ? duck.style.transform = 'scaleX(1)': duck.style.transform = 'scaleX(-1)';     
+        },
+
         stopAnimation : function() {
             animation.pause();
             clearInterval(tID);
@@ -122,33 +124,32 @@ const Duck = (uiRender) => {
         },
         
         fallingAnimation : function() {
-        
-            let endDuck = setInterval ( () => {
-        
-                newDuck.style.backgroundPosition = '-100px -460px';
-                newDuck.style.width = '35px';
-                this.shotedAnimation();
 
-                console.log(maxY);
-        
-                newDuck.animate([
-                    {top: maxY + 'px'}],
-                    {
-                        duration: 1000
-                    }).onfinish = () => {
-                        duckIsDead = true;
-                        newDuck.remove();
-                        uiRender.hideScore();
-                        uiRender.showDog(655, 5);        
-                };
-                clearInterval(endDuck);
-            }, 1000 );
+            return new Promise((resolve) => {
+
+                let endDuck = setInterval ( () => {
+                    newDuck.style.backgroundPosition = '-100px -460px';
+                    newDuck.style.width = '35px';
+                    this.shotedAnimation();
             
-            newDuck.style.backgroundPosition = '0px -460px';
+                    newDuck.animate([
+                        {top: maxY + 'px'}],
+                        {
+                            duration: 1000
+                        }).onfinish = () => {
+                            duckIsDead = true;
+                            newDuck.remove();
+                            uiRender.hideScore();
+                            resolve();
+                    };
+                    clearInterval(endDuck);
+                }, 1000 );
+                
+                newDuck.style.backgroundPosition = '0px -460px';
+            });
         },
 
         shotedAnimation : function() {
-        
             let anim = setInterval ( () => {
                 if(duckIsDead){
                     clearInterval(anim);
@@ -176,25 +177,24 @@ const GameLogic = (uiRender, duck) => {
     /*while(ducksKilled < 11) {
 
     }*/
+    uiRender.blinkDuck();
 
     return ({
-        verifyShot : function() {
-                
-            uiRender.removeBullet();
-            uiRender.blinkDuck();
-            
-            document.addEventListener('click', (event) => {
-                const elementRect = newDuck.getBoundingClientRect();
-                
+        verifyShot : async function() {
+
+            body.addEventListener('click', (event) => {
+                const duckCoord = newDuck.getBoundingClientRect();
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+                uiRender.removeBullet();
+
                 // check if the mouse coordinates are within the element's rectangle
-                if (event.clientX >= elementRect.left && event.clientX <= elementRect.right
-                    && event.clientY >= elementRect.top && event.clientY <= elementRect.bottom) {
+                if (mouseX >= duckCoord.left && mouseX <= duckCoord.right
+                    && mouseY >= duckCoord.top && mouseY <= duckCoord.bottom) {
                     console.log('You killed a duck!');
                     
-                    duck.stopAnimation();
-                    uiRender.miniDuckPosition();
-                    uiRender.showBullet();
-                    uiRender.showScore(elementRect.top, elementRect.left);
+                    this.setInterfaceChanges();
+                    allAnimations();
                     shotDuck = true;
                     ducksKilled++;
 
@@ -203,31 +203,52 @@ const GameLogic = (uiRender, duck) => {
                     shotDuck = false;
                     console.log('You missed!');
                 }
-
-                uiRender.removeBlinkDuck();
                 duckShoted++;
                 round++;
+                
+                //Verifica se ainda tem balas
+                this.verifyBullets();
+                //Verifica se já foram feitas 10 jogadas
+                this.checkLevelResult();
+                
+                //this.replay();
 
-                if (this.verifyBullets()) {
-                    this.gameOver();
-                };
-
-                if (this.checkLevelResult()) {
-                    uiRender.showRoundBox();
-                };
             });
+
+            async function allAnimations(){
+                duck.stopAnimation();
+                await duck.fallingAnimation();
+                await uiRender.showDog(655, 5);
+                await uiRender.showRoundBox();
+                this.replay();
+            }
+        },
+
+        setInterfaceChanges : function(left, top) {
+            uiRender.removeBlinkDuck();
+            uiRender.miniDuckPosition();
+            uiRender.showBullet();
+            uiRender.showScore();
         },
 
         verifyBullets : function() {
-            nrBullets === 0 ? false : true;
+            if (nrBullets === 0) this.gameOver();
+            //nrBullets === 0 ? this.gameOver() : this.replay();
         },
 
         checkLevelResult : function() {
-            return ducksKilled === 10;
+            if (ducksKilled === 10) uiRender.showRoundBox();
         },
 
         gameOver : function() {
-            gameOverBox.style.visibility = 'visible';
+            gameOverDiv.style.visibility = 'visible';
+            body.style.pointerEvents = "none";
+        },
+
+        replay : function () {
+            duck.create();
+            uiRender.blinkDuck();
+            //uiRender.removeBullet();
         }
 
         
@@ -238,6 +259,7 @@ const Interface = () => {
 
     return ({
         removeBullet : function() {
+            console.log(nrBullets);
             bullet = document.querySelector("#shots :nth-child(" + nrBullets + ")");
             bullet.style.visibility = "hidden";
         },
@@ -262,10 +284,11 @@ const Interface = () => {
             miniDuck.style.backgroundPosition = "-27px 582px";
         },
 
-        showScore : function(x, y) {
+        showScore : function() {
+
             mainScore.style.visibility = 'visible';
-            mainScore.style.top = x + 'px';
-            mainScore.style.left = (y - 40) + 'px';
+            mainScore.style.top = mouseY + 'px';
+            mainScore.style.left = (mouseX - 40) + 'px';
 
             mainScore.innerHTML = scoreValues[round];
             scoreDiv.innerHTML = score + scoreValues[round];
@@ -276,59 +299,47 @@ const Interface = () => {
         },
 
         showRoundBox : function () {
-            roundDiv.innerHTML = round;
+            return new Promise((resolve) => {
+                roundDiv.innerHTML = round;
 
-            let show = setInterval ( () => {
-                endRoundDiv.style.visibility = 'visible';
-                clearInterval(show);
-            }, 2000 );
+                //let show = setInterval ( () => {
+                    endRoundDiv.style.visibility = 'visible';
+                    //clearInterval(show);
+                //}, 2000 );
 
-            let hide = setInterval ( () => {
-                endRoundDiv.style.visibility = 'hidden';
-                clearInterval(hide);
-            }, 4000 );
+                let hide = setInterval ( () => {
+                    endRoundDiv.style.visibility = 'hidden';
+                    clearInterval(hide);
+                    resolve();
+                }, 2000 );
+            });
         },
 
         showDog : function(spriteX, spriteY) {
-            dogDiv.style.backgroundPosition = `-${spriteX}px ${spriteY}px`;
-            dogDiv.style.left = newDuck.offsetLeft + 'px';
-            dogDiv.style.bottom = '10%';
-            dogDiv.style.width = '90px';
+            return new Promise((resolve) => {
+                dogDiv.style.backgroundPosition = `-${spriteX}px ${spriteY}px`;
+                dogDiv.style.left = mouseX + 'px';
+                dogDiv.style.bottom = '10%';
+                dogDiv.style.width = '90px';
+                dogDiv.style.zIndex = '0';
 
-            dogDiv.animate([
-                {bottom: '30%'}],
-                {duration: 1000
-                }).onfinish = () => {
-                    dogDiv.style.bottom = '30%';
-                    dogDiv.animate([
-                        {bottom: '10%'}],
-                        {duration: 500, delay: 2000
-                        }).onfinish = () => {
-                            dogDiv.style.visibility = 'hidden';
-                        }
-                };
+                dogDiv.animate([
+                    {bottom: '30%'}],
+                    {duration: 1000
+                    }).onfinish = () => {
+                        dogDiv.style.bottom = '30%';
+                        dogDiv.animate([
+                            {bottom: '10%'}],
+                            {duration: 500, delay: 1500
+                            }).onfinish = () => {
+                                dogDiv.style.visibility = 'hidden';
+                                resolve();
+                            }
+                    };
+            });
         }
     })
 }
-
-
-
-/*const gameLogic = (uiRender) => {
-
-    while(true){
-        //verificar se um pato foi morto
-        verifyShot();
-       
-        //verificar se ainda tem tiros disponíveis
-        verifyBullets();
-
-        
-    }
-
-    createDuck();
-    gameOver();
-}*/
-
 
 const animateDog = () => {
 
@@ -337,7 +348,7 @@ const animateDog = () => {
         let hide = setInterval ( () => {
             endRoundDiv.style.visibility = 'hidden';
             clearInterval(hide);resolve();
-        }, 4000 );
+        }, 1000 );
         
       });
 

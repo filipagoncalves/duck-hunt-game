@@ -4,13 +4,13 @@
 }
 
 body{
-    cursor: url('imgs/gun-pointer.png') 10 10, pointer;
+    /*cursor: url('imgs/gun-pointer.png') 10 10, pointer;*/
     background-color: rgb(60 188 252);
     margin:0;
     padding:0;
 }
 
-.container, .start-screen{
+.container, #start-screen{
     display: flex;
     flex-wrap: wrap;
     font-family: "Pixel", Arial, Helvetica, sans-serif;
@@ -23,10 +23,10 @@ body{
     /*left: -100px;*/
 }
 
-.start-screen, #game-over, #end-round {
+#start-screen, #game-over, #end-round {
     z-index: 10;
     position: fixed;
-    display: none;
+    display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
