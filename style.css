@@ -20,7 +20,7 @@ body{
     width: 100%;
     position: fixed;
     bottom: 0;
-    /*left: -100px;*/
+    z-index: 1;
 }
 
 #start-screen, #game-over, #end-round {
@@ -174,11 +174,11 @@ body{
 .dog {
     background-image: url('imgs/main-sprite.png');
     position: absolute;
-    bottom: 100px;
+    bottom: 18%;
     left: 50px;
     z-index: 10;
     width: 120px;
-    height: 86px;
+    height: 100px;
     /*animation: initialDog 3s;*/
 }
 
@@ -188,7 +188,7 @@ body{
     position: absolute;
     bottom: 100px;
     left: 500px;
-    z-index: 10;
+    z-index: 0;
     width: 70px;
     height: 60px;
 }
@@ -208,19 +208,4 @@ body{
 @keyframes blink {
     from { opacity: 1; }
 	to { opacity: 0; }
-}
-
-@keyframes initialDog {
-    0%  { 
-        transform: translateX(0%);
-        }
-    40%  { 
-        transform: translateX(100%);
-         }
-    70%  { 
-        transform: translateX(100%);
-        }
-    100% { 
-        transform: translateX(200%);
-        }
 }

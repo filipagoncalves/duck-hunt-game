@@ -30,7 +30,7 @@ const startGame = async () => {
     body.style.cursor = 'url("imgs/gun-pointer.png") 10 10, pointer';
     startScreen.style.display = 'none';
 
-    await animateDog();
+    await dog.animateDog();
     duck.create();
     game.verifyShot();
 }
@@ -130,11 +130,59 @@ const Duck = (uiRender) => {
 
 const Dog = () => {
 
-    return ({
-        create : function() {
-            console.log('Using closure :)');
-        },
+    let dogAnim;
+    let countMoove = 0;
 
+    return ({
+        animateDog : function() {
+            return new Promise((resolve) => {
+                
+                this.dogIntroAnim("dog", 0, 0, 120, 360, 100);
+
+                dogDiv.animate(
+                    {left: '200px'},
+                    {duration: 1000}
+                ).onfinish = () => {
+                    dogDiv.style.left = '200px';
+                    clearInterval(dogAnim);
+
+                    this.dogIntroAnim("dog", 360, 0, 120, 480, 150);
+                                        
+                    dog.animate(
+                        {left: '201px'},
+                        {duration: 500, delay: 1000}
+                    ).onfinish = () => {
+                        dogDiv.style.left = '201px';
+                        clearInterval(dogAnim);
+
+                        this.dogIntroAnim("dog", 0, -100, 120, 240, 250);
+
+                        dog.animate(
+                            {left: '230px', bottom: '30%'},
+                            {duration: 900}
+                        ).onfinish = () => {
+                            dogDiv.style.visibility = 'hidden';
+                            clearInterval(dogAnim);
+                            resolve();
+                        };
+
+                    };
+                };
+                console.log("1st");
+              });
+        },
+        
+        dogIntroAnim : function(animal, positionX, positionY, spriteWidth, endPosition, speed) {
+            const startPosition = positionX;
+            dogAnim = setInterval ( () => {
+                document.getElementById(animal).style.backgroundPosition = `-${positionX}px ${positionY}px`; 
+                if (positionX < endPosition) {
+                    positionX += spriteWidth;
+                } else {
+                    positionX = startPosition;
+                }
+            }, speed );
+        }
     })
 }
 
@@ -207,9 +255,7 @@ const GameLogic = (uiRender, duck) => {
             duck.create();
             uiRender.blinkDuck();
             body.style.pointerEvents = "initial";
-        }
-
-        
+        }  
     })
 }
 
@@ -243,7 +289,6 @@ const Interface = () => {
         },
 
         showScore : function() {
-
             mainScore.style.visibility = 'visible';
             mainScore.style.top = mouseY + 'px';
             mainScore.style.left = (mouseX - 40) + 'px';
@@ -259,11 +304,7 @@ const Interface = () => {
         showRoundBox : function () {
             return new Promise((resolve) => {
                 roundDiv.innerHTML = round;
-
-                //let show = setInterval ( () => {
-                    endRoundDiv.style.visibility = 'visible';
-                    //clearInterval(show);
-                //}, 2000 );
+                endRoundDiv.style.visibility = 'visible';
 
                 let hide = setInterval ( () => {
                     endRoundDiv.style.visibility = 'hidden';
@@ -305,60 +346,6 @@ const Interface = () => {
     })
 }
 
-const animateDog = () => {
-
-    return new Promise((resolve) => {
-        console.log("1st");
-        let hide = setInterval ( () => {
-            endRoundDiv.style.visibility = 'hidden';
-            clearInterval(hide);resolve();
-        }, 1000 );
-        
-      });
-
-    //console.log("Dog has been created!");
-}
-
-let dogAnim;
-let countMoove = 0;
-const dogIntroAnim = (animal, positionX, positionY, spriteWidth, endPosition, speed) => {
-    
-    dogAnim = setInterval ( () => {
-        document.getElementById(animal).style.backgroundPosition = `-${positionX}px ${positionY}px`; 
-        if (positionX < endPosition) {
-            positionX += spriteWidth;
-            countMoove++;
-        } else {
-            positionX = 0;
-        }
-    }
-    , speed );
-}
-
-//dogIntroAnim("dog", 0, 0, 120, 480, 120);
-
-const dogAnimation = (valueX, valueY) => {
-
-    const duckX = duck.offsetLeft;
-    const duckY = duck.offsetTop;
-    const distance = Math.floor(Math.sqrt((valueX - duckX) ** 2 + (valueY - duckY) ** 2));
-    const duration = distance / 0.2;
-    
-    console.log(valueX, valueY);
-    checkCoordinates(duckX, valueX);
-    
-    animation = duck.animate([
-        {left: valueX + 'px', top: valueY + 'px'}],
-        {duration: duration});
-        
-    animation.onfinish = () => {
-        duck.style.left = valueX + 'px';
-        duck.style.top = valueY + 'px';
-        duckAnimation(duckPath(window.innerWidth - duckX), duckPath(window.innerHeight - duckY));
-    };
-}
-
-
 let tID;
 const animateSprite = (animal, positionX, positionY, spriteWidth, endPosition, speed) => {
     
@@ -372,12 +359,6 @@ const animateSprite = (animal, positionX, positionY, spriteWidth, endPosition, s
     }
     , speed );
 }
-
-//animateScript("dog", 0, 0, 120, 480, 120);
-//animateScript("duck", 0, -230, 80, 160, 200); //1a linha
-//animateScript("duck", 0, -300, 80, 160, 200); //2º linha
-//animateScript("duck", 0, -380, 80, 160, 200); //3º linha
-//animateScript("duck", 0, -460, 65, 65, 500); //dying duck
 
 const randomNumber = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
