@@ -5,43 +5,20 @@ const startScreen = document.getElementById("start-screen");
 const scoreDiv = document.getElementById("score");
 const endRoundDiv = document.getElementById("end-round");
 const roundDiv = document.getElementById("round");
+const roundNrDiv = document.getElementById("round-nr");
 const gameOverDiv = document.getElementById("game-over");
 const dogDiv = document.getElementById("dog");
 
-let mouseX, mouseY = 0;
-
+let mouseX, mouseY, maxX, maxY= 0;
 let bullet, miniDuck = null;
 const scoreValues = [500, 1000, 1500, 2000, 2500, 3000];
 let duckIsDead = false;
 let nrBullets = 3;
-let shotDuck = false;
 let duckShoted = 2;
 let ducksKilled = 0;
 let newDuck = null;
-
-let maxX, maxY = 0;
-
 let round = 1;
 let score = 000000;
-
-document.addEventListener('mousemove', (event) => {
-    //console.log(event.clientX, event.clientY);
-});
-
-
-const startGame1 = async () => {
-
-    const dog = Dog();
-    const duckD = Duck();
-    const game = GameLogic();
-    const uiRender = Interface();
-
-    await animateDog();
-    await duckD.create();
-    gameLogic();
-
-    game.verifyShot();
-}
 
 const startGame = async () => {
 
@@ -54,13 +31,14 @@ const startGame = async () => {
     startScreen.style.display = 'none';
 
     await animateDog();
-    await duck.create();
+    duck.create();
     game.verifyShot();
 }
 
 const Duck = (uiRender) => {
 
     let animation = null;
+    let shotedAnim = null;
     
     return ({
 
@@ -77,11 +55,6 @@ const Duck = (uiRender) => {
 
             animateSprite("duck", 0, -230, 80, 160, 200);
             this.animation(this.path(maxX), this.path(maxY));
-        
-            return new Promise((resolve) => {
-                console.log("second");
-                resolve();
-            });
         },
 
         initialPosition : function () {
@@ -102,10 +75,10 @@ const Duck = (uiRender) => {
             
             this.checkCoordinates(duck, duckX, valueX);
             
-            animation = newDuck.animate([
-                {left: valueX + 'px', top: valueY + 'px'}],
+            animation = newDuck.animate(
+                {left: valueX + 'px', top: valueY + 'px'},
                 {duration: duration});
-                
+
             animation.onfinish = () => {
                 newDuck.style.left = valueX + 'px';
                 newDuck.style.top = valueY + 'px';
@@ -120,45 +93,38 @@ const Duck = (uiRender) => {
         stopAnimation : function() {
             animation.pause();
             clearInterval(tID);
-            this.fallingAnimation();
         },
         
         fallingAnimation : function() {
 
             return new Promise((resolve) => {
+                
+                newDuck.style.backgroundPosition = '0px -460px';
 
                 let endDuck = setInterval ( () => {
+                    this.shotedAnimation();
                     newDuck.style.backgroundPosition = '-100px -460px';
                     newDuck.style.width = '35px';
-                    this.shotedAnimation();
             
-                    newDuck.animate([
-                        {top: maxY + 'px'}],
-                        {
-                            duration: 1000
+                    newDuck.animate(
+                        {top: maxY + 'px'},
+                        { duration: 1000
                         }).onfinish = () => {
-                            duckIsDead = true;
+                            clearInterval(shotedAnim);
                             newDuck.remove();
                             uiRender.hideScore();
                             resolve();
                     };
                     clearInterval(endDuck);
-                }, 1000 );
-                
-                newDuck.style.backgroundPosition = '0px -460px';
+                }, 1000 ); 
             });
         },
 
         shotedAnimation : function() {
-            let anim = setInterval ( () => {
-                if(duckIsDead){
-                    clearInterval(anim);
-                } else {
-                    newDuck.style.transform === 'scaleX(1)' ? newDuck.style.transform = 'scaleX(-1)' : newDuck.style.transform = 'scaleX(1)';
-                }
+            shotedAnim = setInterval ( () => {
+                newDuck.style.transform === 'scaleX(1)' ? newDuck.style.transform = 'scaleX(-1)' : newDuck.style.transform = 'scaleX(1)';
             }, 200 );
         }
-
     })
 }
 
@@ -174,13 +140,10 @@ const Dog = () => {
 
 const GameLogic = (uiRender, duck) => {
 
-    /*while(ducksKilled < 11) {
-
-    }*/
     uiRender.blinkDuck();
 
     return ({
-        verifyShot : async function() {
+        verifyShot : function() {
 
             body.addEventListener('click', (event) => {
                 const duckCoord = newDuck.getBoundingClientRect();
@@ -194,46 +157,41 @@ const GameLogic = (uiRender, duck) => {
                     console.log('You killed a duck!');
                     
                     this.setInterfaceChanges();
-                    allAnimations();
-                    shotDuck = true;
+                    this.allAnimations();
                     ducksKilled++;
+                    duckShoted++;
+                    round++;
 
                 } else {
                     nrBullets--;
-                    shotDuck = false;
                     console.log('You missed!');
                 }
-                duckShoted++;
-                round++;
-                
                 //Verifica se ainda tem balas
                 this.verifyBullets();
                 //Verifica se já foram feitas 10 jogadas
                 this.checkLevelResult();
-                
-                //this.replay();
+            });     
+        },
 
-            });
-
-            async function allAnimations(){
-                duck.stopAnimation();
-                await duck.fallingAnimation();
-                await uiRender.showDog(655, 5);
-                await uiRender.showRoundBox();
-                this.replay();
-            }
+        allAnimations: async function (){
+            duck.stopAnimation();
+            await duck.fallingAnimation();
+            await uiRender.showDog(655, 5);
+            await uiRender.showRoundBox();
+            uiRender.updateRound();
+            uiRender.showBullet();
+            this.replay();
         },
 
         setInterfaceChanges : function(left, top) {
             uiRender.removeBlinkDuck();
             uiRender.miniDuckPosition();
-            uiRender.showBullet();
             uiRender.showScore();
+            body.style.pointerEvents = "none";
         },
 
         verifyBullets : function() {
             if (nrBullets === 0) this.gameOver();
-            //nrBullets === 0 ? this.gameOver() : this.replay();
         },
 
         checkLevelResult : function() {
@@ -248,7 +206,7 @@ const GameLogic = (uiRender, duck) => {
         replay : function () {
             duck.create();
             uiRender.blinkDuck();
-            //uiRender.removeBullet();
+            body.style.pointerEvents = "initial";
         }
 
         
@@ -315,13 +273,19 @@ const Interface = () => {
             });
         },
 
+        updateRound : function() {
+            roundNrDiv.innerHTML = roundDiv.innerHTML;
+        },
+
         showDog : function(spriteX, spriteY) {
+            
             return new Promise((resolve) => {
                 dogDiv.style.backgroundPosition = `-${spriteX}px ${spriteY}px`;
                 dogDiv.style.left = mouseX + 'px';
                 dogDiv.style.bottom = '10%';
                 dogDiv.style.width = '90px';
                 dogDiv.style.zIndex = '0';
+                dogDiv.style.visibility = 'visible';
 
                 dogDiv.animate([
                     {bottom: '30%'}],
