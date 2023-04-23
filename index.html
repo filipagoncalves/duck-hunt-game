@@ -8,32 +8,91 @@
     <title>Document</title>
 </head>
 <body>
+    <main id="main" class="container">
 
-    <main class="container">
-        <div></div>
-
-        
-    </main>
-
-    <div class="start-screen">
-        <div class="title-box">
-            <div class="title">
-                <img src="imgs/duck_hunt_logo.png" alt="Duck Hunt" width="360"/>
-            </div>
-            <div class="game" onclick="playGame()">
-                <div id="play">&#9654;<div>&nbsp;GAME A</div></div>
-                <div>1 DUCK</div>
-            </div>
-            <div class="game" onclick="playGame()">
-                <div id="play">&#9654;<div>&nbsp;GAME B</div></div>
-                <div>2 DUCK</div>
-            </div>
-            <div class="top-score">
-                <div>TOP SCORE: </div>
-                <div id="total-score">00000</div>
+        <div id="start-screen">
+            <div class="title-box">
+                <div class="title">
+                    <img src="imgs/duck_hunt_logo.png" alt="Duck Hunt" width="360"/>
+                </div>
+                <div class="game" onclick="startGame()">
+                    <div>
+                        <div id="play">&#9654;</div>
+                        <div>&nbsp;GAME A</div>
+                    </div>
+                    <div>1 DUCK</div>
+                </div>
+                <div class="game" onclick="starGame()">
+                    <div>
+                        <div id="play">&#9654;</div>
+                        <div>&nbsp;GAME B</div>
+                    </div>
+                    <div>2 DUCK</div>
+                </div>
+                <div class="top-score">
+                    <div>TOP SCORE: </div>
+                    <div id="total-score">000000</div>
+                </div>
             </div>
         </div>
-    </div>
+
+        <div id="game-over">
+            <div class="game-over">GAME OVER!</div>
+        </div>
+        <div class="block-screen">
+            <div class="game-over">ROTATE YOUR MOBILE</div>
+        </div>
+        <div id="end-round">
+            <div class="round-box box">
+                <div id="round-text">ROUND</div>
+                <div id="round">1</div>
+            </div>
+        </div>
+        <div id="main-score">000</div>
+        <div id="dog" class="dog"></div>
+        <div class="gamePanel">
+            <div class="scores-box">
+                <div class="rounds">
+                    <div>R = <span id="round-nr">1</span></div>
+                </div>
+                <div class="player-box">
+                    <div class="shot-box box">
+                        <div id="shots">
+                            <div class="shot"></div>
+                            <div class="shot"></div>
+                            <div class="shot"></div>
+                        </div>
+                        <div>SHOT</div>
+                    </div>
+                    <div class="hit-box box">
+                        <div>
+                            <div class="hit">HIT&nbsp;</div>
+                        </div>
+                        <div>
+                            <div id="ducks">
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                            </div>
+                            <div>||||||||||||||</div>
+                        </div>
+                    </div>
+                    <div class="score-box box">
+                        <div id="score">0</div>
+                        <div>SCORE</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scenario"></div>
+    </main>
 
     <script src="script.js"></script>
 </body>

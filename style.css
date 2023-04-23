@@ -3,21 +3,33 @@
     src: url('fonts/press-start-p2-regular.ttf') format('truetype');
 }
 
-
 body{
-    background-color: rgb(0, 200, 231);
+    /*cursor: url('imgs/gun-pointer.png') 10 10, pointer;*/
+    background-color: rgb(60 188 252);
     margin:0;
     padding:0;
 }
 
-.container, .start-screen{
+.container, #start-screen{
     display: flex;
     flex-wrap: wrap;
     font-family: "Pixel", Arial, Helvetica, sans-serif;
 }
 
-.start-screen {
-    display: none;
+.scenario {
+    background-image: url('imgs/stage-wb.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+}
+
+#start-screen, #game-over, #end-round , .block-screen{
+    z-index: 10;
+    position: fixed;
+    display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -25,6 +37,49 @@ body{
     color: white;
     width: 100vw;
     height: 100vh;
+    overflow: hidden;
+}
+
+.box {
+    background-color: black;
+    border: 3px solid greenyellow;
+    border-radius: 10px;
+    padding: 7px;
+}
+
+.box > div {
+    padding-bottom: 3px;
+}
+
+#game-over {
+    display: flex;
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, 0.3);
+    font-size: 200%;
+}
+
+#end-round {
+    visibility: hidden;
+    display: flex;
+    background-color: transparent;
+    font-size: 20px;
+    text-align: center;
+    top: -20%;
+}
+
+.block-screen {
+    z-index: 11;
+    visibility: hidden;
+    font-size: 24px;
+}
+
+.round-box {
+    padding: 15px;
+    border-color: white;
+}
+
+#round-text {
+    margin-bottom: 10px;
 }
 
 .title-box {
@@ -38,16 +93,20 @@ body{
 
 .game {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     cursor: pointer;
     padding: 15px;
+}
+
+.game > div {
+    display: flex;
 }
 
 #play {
     display: flex;
     flex-wrap: nowrap;
     /*visibility: hidden;*/
+    animation: blink 1s infinite;
 }
 
 .top-score {
@@ -56,4 +115,130 @@ body{
     justify-content: center;
     color: green;
     padding: 15px;
+}
+
+.gamePanel {
+    z-index: 2;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    bottom: 2%;
+    width: 100%;
+}
+
+.scores-box {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: fit-content;
+}
+
+.rounds {
+    display: flex;
+    height: auto;
+    background-color: black;
+    color: white;
+    width: fit-content;
+    align-self: flex-start;
+}
+
+.player-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+    gap: 25px;
+    color: white;
+}
+
+.shot-box {
+    color: cyan;
+}
+
+#shots, .hit-box, #ducks {
+    display: flex;
+    font-size: 12px;
+}
+
+.shot {
+    background-image: url('imgs/main-sprite.png');
+    background-position: 0px 582px;
+    width: 20px;
+    height: 20px;
+    margin-bottom: 5px;
+}
+
+.hit {
+    display: flex;
+    color: greenyellow;
+    font-size: 17px;
+}
+
+#ducks {
+    margin-bottom: 10px;
+}
+
+.thumbDuck {
+    background-image: url('imgs/main-sprite.png');
+    background-position: -54px 582px;
+    width: 20px;
+    height: 20px;
+    padding-left: 2px;
+}
+
+.score-box {
+    font-size: 20px;
+    text-align: right;
+}
+
+.dog {
+    background-image: url('imgs/main-sprite.png');
+    position: absolute;
+    bottom: 15%;
+    left: 50px;
+    z-index: 2;
+    width: 120px;
+    height: 100px;
+    visibility: visible;
+    /*animation: initialDog 3s;*/
+}
+
+.duck {
+    background-image: url('imgs/main-sprite.png');
+    background-position: 0px -230px;
+    position: absolute;
+    z-index: 0;
+    width: 70px;
+    height: 60px;
+}
+
+.blink {
+    animation: blink 1s infinite;
+}
+
+#main-score {
+    z-index: 5;
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    visibility: hidden;
+}
+
+@keyframes blink {
+    from { opacity: 1; }
+	to { opacity: 0; }
+}
+
+@media screen and (max-width: 768px) {
+    .score-box {
+        font-size: 17px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .block-screen {
+        visibility: visible;
+        text-align: center;
+        line-height: 50px;
+    }
 }
