@@ -10,27 +10,29 @@ const ducksDiv = document.getElementsByClassName("thumbDuck");
 const roundNrDiv = document.getElementById("round-nr");
 const gameOverDiv = document.getElementById("game-over");
 const dogDiv = document.getElementById("dog");
+const audios = ['dog-barking.mp3', 'duck-falling.mp3', 'duck-hunt-intro.mp3', 'game-over.mp3', 'gun-shot.mp3', 'next-round.mp3', 'duck-quack.mp3'];
+let audio = new Audio(`audios/${audios[2]}`);
 
-let mouseX, mouseY, maxX, maxY= 0;
+let mouseX, mouseY, maxX, maxY, ducksKilled, score = 0;
 let bullet, miniDuck = null;
 const scoreValues = ['', 500, 1000, 1500, 2000, 2500, 3000];
 let nrBullets = 3;
-let duckShoted = 1;
-let ducksKilled = 0;
+let duckShoted, round = 1;
 let newDuck = null;
 let duckSpeed = 0.2;
-let round = 1;
-let score = 000000;
 
 totalScoreDiv.innerHTML = localStorage.getItem("totalScore");
+
+audio.play();
 
 const startGame = async () => {
 
     body.style.cursor = 'url("imgs/gun-pointer.png") 10 10, pointer';
     startScreen.style.display = 'none';
+    audio.pause();
     
-    const dog = Dog();
     const uiRender = Interface();
+    const dog = Dog(uiRender);
     const duck = Duck(uiRender);
     const game = GameLogic(uiRender, duck, dog);
 
@@ -44,7 +46,6 @@ const Duck = (uiRender) => {
     let animation, shotedAnim, duckSprite = null;
 
     return ({
-
         create : function() {
             newDuck = document.createElement("div");
             newDuck.id = "duck";
@@ -96,6 +97,7 @@ const Duck = (uiRender) => {
                 {duration: duration});
 
             animation.onfinish = () => {
+                uiRender.playSound(audios[6]);
                 newDuck.style.left = valueX + 'px';
                 newDuck.style.top = valueY + 'px';
                 this.animation(this.path(window.innerWidth - duckX), this.path(window.innerHeight - duckY));
@@ -137,6 +139,7 @@ const Duck = (uiRender) => {
         },
 
         shotedAnimation : function() {
+            uiRender.playSound(audios[1]);
             shotedAnim = setInterval ( () => {
                 newDuck.style.transform === 'scaleX(1)' ? newDuck.style.transform = 'scaleX(-1)' : newDuck.style.transform = 'scaleX(1)';
             }, 200 );
@@ -144,7 +147,7 @@ const Duck = (uiRender) => {
     })
 }
 
-const Dog = () => {
+const Dog = (uiRender) => {
 
     let dogAnim;
 
@@ -173,6 +176,7 @@ const Dog = () => {
                     ).onfinish = () => {
                         clearInterval(dogAnim);
                         this.dogIntroAnim(dogDiv, 0, -100, 120, 240, 250);
+                        uiRender.playSound(audios[0]);
 
                         dog.animate(
                             {left: '230px', bottom: '30%'},
@@ -213,6 +217,7 @@ const GameLogic = (uiRender, duck, dog) => {
                 mouseX = event.clientX;
                 mouseY = event.clientY;
                 uiRender.removeBullet();
+                uiRender.playSound(audios[4]);
 
                 if (mouseX >= duckCoord.left && mouseX <= duckCoord.right
                     && mouseY >= duckCoord.top && mouseY <= duckCoord.bottom) {
@@ -266,6 +271,7 @@ const GameLogic = (uiRender, duck, dog) => {
         gameOver : function() {
             gameOverDiv.style.visibility = 'visible';
             body.style.pointerEvents = "none";
+            uiRender.playSound(audios[3]);
             this.storageScore();
         },
 
@@ -326,6 +332,7 @@ const Interface = () => {
         },
 
         showRoundBox : function () {
+            this.playSound(audios[5]);
             return new Promise((resolve) => {
                 roundDiv.innerHTML = round;
                 endRoundDiv.style.visibility = 'visible';
@@ -366,6 +373,11 @@ const Interface = () => {
                             }
                     };
             });
+        },
+
+        playSound : function(sound){
+            audio = new Audio(`audios/${sound}`);
+            audio.play();
         }
     })
 }
