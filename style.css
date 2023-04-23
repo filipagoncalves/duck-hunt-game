@@ -16,14 +16,17 @@ body{
     font-family: "Pixel", Arial, Helvetica, sans-serif;
 }
 
-.scenario img {
-    width: 100%;
-    position: fixed;
-    bottom: 0;
+.scenario {
+    background-image: url('imgs/stage-wb.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    width: 100vw;
+    height: 100vh;
     z-index: 1;
 }
 
-#start-screen, #game-over, #end-round {
+#start-screen, #game-over, #end-round , .block-screen{
     z-index: 10;
     position: fixed;
     display: flex;
@@ -35,6 +38,17 @@ body{
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+}
+
+.box {
+    background-color: black;
+    border: 3px solid greenyellow;
+    border-radius: 10px;
+    padding: 7px;
+}
+
+.box > div {
+    padding-bottom: 3px;
 }
 
 #game-over {
@@ -53,9 +67,19 @@ body{
     top: -20%;
 }
 
+.block-screen {
+    z-index: 11;
+    visibility: hidden;
+    font-size: 24px;
+}
+
 .round-box {
     padding: 15px;
     border-color: white;
+}
+
+#round-text {
+    margin-bottom: 10px;
 }
 
 .title-box {
@@ -127,22 +151,13 @@ body{
     color: white;
 }
 
-.box {
-    background-color: black;
-    border: 3px solid greenyellow;
-    border-radius: 10px;
-}
-
-.box > div {
-    padding: 6px;
-}
-
 .shot-box {
     color: cyan;
 }
 
-#shots {
+#shots, .hit-box, #ducks {
     display: flex;
+    font-size: 12px;
 }
 
 .shot {
@@ -150,12 +165,17 @@ body{
     background-position: 0px 582px;
     width: 20px;
     height: 20px;
+    margin-bottom: 5px;
+}
+
+.hit {
+    display: flex;
+    color: greenyellow;
+    font-size: 17px;
 }
 
 #ducks {
-    display: flex;
-    color: greenyellow;
-    font-size: 20px;
+    margin-bottom: 10px;
 }
 
 .thumbDuck {
@@ -174,11 +194,12 @@ body{
 .dog {
     background-image: url('imgs/main-sprite.png');
     position: absolute;
-    bottom: 18%;
+    bottom: 15%;
     left: 50px;
-    z-index: 10;
+    z-index: 2;
     width: 120px;
     height: 100px;
+    visibility: visible;
     /*animation: initialDog 3s;*/
 }
 
@@ -186,9 +207,7 @@ body{
     background-image: url('imgs/main-sprite.png');
     background-position: 0px -230px;
     position: absolute;
-    /*bottom: 100px;
-    left: 500px;*/
-    z-index: 10;
+    z-index: 0;
     width: 70px;
     height: 60px;
 }
@@ -208,4 +227,18 @@ body{
 @keyframes blink {
     from { opacity: 1; }
 	to { opacity: 0; }
+}
+
+@media screen and (max-width: 768px) {
+    .score-box {
+        font-size: 17px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .block-screen {
+        visibility: visible;
+        text-align: center;
+        line-height: 50px;
+    }
 }

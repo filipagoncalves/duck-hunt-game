@@ -9,8 +9,38 @@
 </head>
 <body>
     <main id="main" class="container">
+
+        <div id="start-screen">
+            <div class="title-box">
+                <div class="title">
+                    <img src="imgs/duck_hunt_logo.png" alt="Duck Hunt" width="360"/>
+                </div>
+                <div class="game" onclick="startGame()">
+                    <div>
+                        <div id="play">&#9654;</div>
+                        <div>&nbsp;GAME A</div>
+                    </div>
+                    <div>1 DUCK</div>
+                </div>
+                <div class="game" onclick="starGame()">
+                    <div>
+                        <div id="play">&#9654;</div>
+                        <div>&nbsp;GAME B</div>
+                    </div>
+                    <div>2 DUCK</div>
+                </div>
+                <div class="top-score">
+                    <div>TOP SCORE: </div>
+                    <div id="total-score">000000</div>
+                </div>
+            </div>
+        </div>
+
         <div id="game-over">
             <div class="game-over">GAME OVER!</div>
+        </div>
+        <div class="block-screen">
+            <div class="game-over">ROTATE YOUR MOBILE</div>
         </div>
         <div id="end-round">
             <div class="round-box box">
@@ -35,58 +65,34 @@
                         <div>SHOT</div>
                     </div>
                     <div class="hit-box box">
-                        <div id="ducks">
+                        <div>
                             <div class="hit">HIT&nbsp;</div>
-                            <div class="thumbDuck"></div>
-                            <div class="thumbDuck"></div>
-                            <div class="thumbDuck"></div>
-                            <div class="thumbDuck"></div>
-                            <div class="thumbDuck"></div>
-                            <div class="thumbDuck"></div>
-                            <div class="thumbDuck"></div>
-                            <div class="thumbDuck"></div>
-                            <div class="thumbDuck"></div>
-                            <div class="thumbDuck"></div>
                         </div>
-                        <div>||||||||||||||</div>
+                        <div>
+                            <div id="ducks">
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                                <div class="thumbDuck"></div>
+                            </div>
+                            <div>||||||||||||||</div>
+                        </div>
                     </div>
                     <div class="score-box box">
-                        <div id="score">000000</div>
+                        <div id="score">0</div>
                         <div>SCORE</div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="scenario">
-            <img src="imgs/stage-wb.png" alt="stage" />
-        </div>
+        <div class="scenario"></div>
     </main>
-
-    <div id="start-screen">
-        <div class="title-box">
-            <div class="title">
-                <img src="imgs/duck_hunt_logo.png" alt="Duck Hunt" width="360"/>
-            </div>
-            <div class="game" onclick="startGame()">
-                <div>
-                    <div id="play">&#9654;</div>
-                    <div>&nbsp;GAME A</div>
-                </div>
-                <div>1 DUCK</div>
-            </div>
-            <div class="game" onclick="starGame()">
-                <div>
-                    <div id="play">&#9654;</div>
-                    <div>&nbsp;GAME B</div>
-                </div>
-                <div>2 DUCK</div>
-            </div>
-            <div class="top-score">
-                <div>TOP SCORE:</div>
-                <div id="total-score">000000</div>
-            </div>
-        </div>
-    </div>
 
     <script src="script.js"></script>
 </body>

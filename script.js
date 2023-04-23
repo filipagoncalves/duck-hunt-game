@@ -6,6 +6,7 @@ const scoreDiv = document.getElementById("score");
 const totalScoreDiv = document.getElementById("total-score");
 const endRoundDiv = document.getElementById("end-round");
 const roundDiv = document.getElementById("round");
+const ducksDiv = document.getElementsByClassName("thumbDuck");
 const roundNrDiv = document.getElementById("round-nr");
 const gameOverDiv = document.getElementById("game-over");
 const dogDiv = document.getElementById("dog");
@@ -14,40 +15,34 @@ let mouseX, mouseY, maxX, maxY= 0;
 let bullet, miniDuck = null;
 const scoreValues = ['', 500, 1000, 1500, 2000, 2500, 3000];
 let nrBullets = 3;
-let duckShoted = 2;
+let duckShoted = 1;
 let ducksKilled = 0;
 let newDuck = null;
 let duckSpeed = 0.2;
 let round = 1;
 let score = 000000;
 
-const storedScore = localStorage.getItem('gameScore', score);
-
+totalScoreDiv.innerHTML = localStorage.getItem("totalScore");
 
 const startGame = async () => {
 
+    body.style.cursor = 'url("imgs/gun-pointer.png") 10 10, pointer';
+    startScreen.style.display = 'none';
+    
     const dog = Dog();
     const uiRender = Interface();
     const duck = Duck(uiRender);
-    const game = GameLogic(uiRender, duck);
-
-    body.style.cursor = 'url("imgs/gun-pointer.png") 10 10, pointer';
-    startScreen.style.display = 'none';
+    const game = GameLogic(uiRender, duck, dog);
 
     await dog.animateDog();
-
-    //while (nrBullets > 0) {
-        duck.create();
-        game.verifyShot();
-    //}
-    
+    duck.create();
+    game.verifyShot();
 }
 
 const Duck = (uiRender) => {
 
-    let animation = null;
-    let shotedAnim = null;
-    
+    let animation, shotedAnim, duckSprite = null;
+
     return ({
 
         create : function() {
@@ -61,7 +56,7 @@ const Duck = (uiRender) => {
             main.appendChild(newDuck);
             this.initialPosition();
 
-            animateSprite("duck", 0, -230, 80, 160, 200);
+            this.animateSprite(newDuck, 0, -230, 80, 160, 200);
             this.animation(this.path(maxX), this.path(maxY));
         },
 
@@ -70,6 +65,19 @@ const Duck = (uiRender) => {
             
             newDuck.style.top = '75%';
             newDuck.style.left = randomNumber(0, maxPositionX) + "px";
+        },
+
+        animateSprite : function (animal, positionX, positionY, spriteWidth, endPosition, speed) {
+            
+            duckSprite = setInterval ( () => {
+                animal.style.backgroundPosition = `-${positionX}px ${positionY}px`; 
+                if (positionX < endPosition) {
+                    positionX += spriteWidth;
+                } else {
+                    positionX = 0;
+                }
+            }
+            , speed );
         },
 
         path : (max) => randomNumber(0, max),
@@ -100,7 +108,7 @@ const Duck = (uiRender) => {
 
         stopAnimation : function() {
             animation.pause();
-            clearInterval(tID);
+            clearInterval(duckSprite);
         },
         
         fallingAnimation : function() {
@@ -139,13 +147,17 @@ const Duck = (uiRender) => {
 const Dog = () => {
 
     let dogAnim;
-    let countMoove = 0;
 
     return ({
         animateDog : function() {
             return new Promise((resolve) => {
-                
-                this.dogIntroAnim("dog", 0, 0, 120, 360, 100);
+                dogDiv.style.visibility = 'visible';
+                dogDiv.style.zIndex = '2';
+                dogDiv.style.left = '10%';
+                dogDiv.style.bottom = '15%';
+                dogDiv.style.width = '120px';
+
+                this.dogIntroAnim(dogDiv, 0, 0, 120, 360, 100);
 
                 dogDiv.animate(
                     {left: '200px'},
@@ -153,17 +165,14 @@ const Dog = () => {
                 ).onfinish = () => {
                     dogDiv.style.left = '200px';
                     clearInterval(dogAnim);
-
-                    this.dogIntroAnim("dog", 360, 0, 120, 480, 150);
+                    this.dogIntroAnim(dogDiv, 360, 0, 120, 480, 150);
                                         
                     dog.animate(
                         {left: '201px'},
                         {duration: 500, delay: 1000}
                     ).onfinish = () => {
-                        dogDiv.style.left = '201px';
                         clearInterval(dogAnim);
-
-                        this.dogIntroAnim("dog", 0, -100, 120, 240, 250);
+                        this.dogIntroAnim(dogDiv, 0, -100, 120, 240, 250);
 
                         dog.animate(
                             {left: '230px', bottom: '30%'},
@@ -176,14 +185,13 @@ const Dog = () => {
 
                     };
                 };
-                console.log("1st");
               });
         },
         
         dogIntroAnim : function(animal, positionX, positionY, spriteWidth, endPosition, speed) {
             const startPosition = positionX;
             dogAnim = setInterval ( () => {
-                document.getElementById(animal).style.backgroundPosition = `-${positionX}px ${positionY}px`; 
+                animal.style.backgroundPosition = `-${positionX}px ${positionY}px`; 
                 if (positionX < endPosition) {
                     positionX += spriteWidth;
                 } else {
@@ -194,7 +202,7 @@ const Dog = () => {
     })
 }
 
-const GameLogic = (uiRender, duck) => {
+const GameLogic = (uiRender, duck, dog) => {
 
     return ({
         verifyShot : function() {
@@ -206,22 +214,18 @@ const GameLogic = (uiRender, duck) => {
                 mouseY = event.clientY;
                 uiRender.removeBullet();
 
-                // check if the mouse coordinates are within the element's rectangle
                 if (mouseX >= duckCoord.left && mouseX <= duckCoord.right
                     && mouseY >= duckCoord.top && mouseY <= duckCoord.bottom) {
-                    this.setInterfaceChanges();
-                    this.checkRoundResult();
-                    this.allAnimations();
                     ducksKilled++;
+                    this.setInterfaceChanges();
+                    this.allAnimations();
                     duckShoted++;
                 } else {
                     nrBullets--;
                     console.log('You missed!');
                 }
-                //Verifica se ainda tem balas
+
                 this.verifyBullets();
-                //Verifica se já foram feitas 10 jogadas
-                //this.checkRoundResult();
             });     
         },
 
@@ -233,6 +237,8 @@ const GameLogic = (uiRender, duck) => {
                 round++;
                 await uiRender.showRoundBox();
                 uiRender.updateRound();
+                this.resetValues();
+                await dog.animateDog();
             }
             uiRender.showBullet();
             this.replay();
@@ -249,17 +255,24 @@ const GameLogic = (uiRender, duck) => {
             if (nrBullets === 0) this.gameOver();
         },
 
-        checkRoundResult : function() {
-            if (ducksKilled === 10) {
-                ducksKilled = 0;
-                duckShoted = 2;
-                duckSpeed += 0.1;
-            }
+        resetValues : function() {
+            ducksKilled = 0;
+            duckShoted = 1;
+            duckSpeed += 0.1;
+
+            Array.from(ducksDiv).forEach(el => {el.style.backgroundPosition = '-54px 582px';});
         },
 
         gameOver : function() {
             gameOverDiv.style.visibility = 'visible';
             body.style.pointerEvents = "none";
+            this.storageScore();
+        },
+
+        storageScore : function(){
+            if (score > localStorage.getItem("totalScore")) {
+                localStorage.setItem("totalScore", score);
+            }
         },
 
         replay : function () {
@@ -274,7 +287,6 @@ const Interface = () => {
 
     return ({
         removeBullet : function() {
-            console.log(nrBullets);
             bullet = document.querySelector("#shots :nth-child(" + nrBullets + ")");
             bullet.style.visibility = "hidden";
         },
@@ -334,17 +346,17 @@ const Interface = () => {
             
             return new Promise((resolve) => {
                 dogDiv.style.backgroundPosition = `-${spriteX}px ${spriteY}px`;
-                dogDiv.style.left = mouseX + 'px';
                 dogDiv.style.bottom = '10%';
                 dogDiv.style.width = '90px';
+                dogDiv.style.left = (mouseX - dogDiv.offsetWidth/2) + 'px';
                 dogDiv.style.zIndex = '0';
                 dogDiv.style.visibility = 'visible';
 
                 dogDiv.animate([
-                    {bottom: '30%'}],
+                    {bottom: '25%'}],
                     {duration: 1000
                     }).onfinish = () => {
-                        dogDiv.style.bottom = '30%';
+                        dogDiv.style.bottom = '25%';
                         dogDiv.animate([
                             {bottom: '10%'}],
                             {duration: 500, delay: 1500
@@ -356,20 +368,6 @@ const Interface = () => {
             });
         }
     })
-}
-
-let tID;
-const animateSprite = (animal, positionX, positionY, spriteWidth, endPosition, speed) => {
-    
-    tID = setInterval ( () => {
-        document.getElementById(animal).style.backgroundPosition = `-${positionX}px ${positionY}px`; 
-        if (positionX < endPosition) {
-            positionX += spriteWidth;
-        } else {
-            positionX = 0;
-        }
-    }
-    , speed );
 }
 
 const randomNumber = (min, max) => {
