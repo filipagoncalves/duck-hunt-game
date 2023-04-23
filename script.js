@@ -10,20 +10,20 @@ const ducksDiv = document.getElementsByClassName("thumbDuck");
 const roundNrDiv = document.getElementById("round-nr");
 const gameOverDiv = document.getElementById("game-over");
 const dogDiv = document.getElementById("dog");
-const audios = ['dog-barking.mp3', 'duck-falling.mp3', 'duck-hunt-intro.mp3', 'game-over.mp3', 'gun-shot.mp3', 'next-round.mp3', 'duck-quack.mp3'];
-let audio = new Audio(`audios/${audios[2]}`);
 
-let mouseX, mouseY, maxX, maxY, ducksKilled, score = 0;
-let bullet, miniDuck = null;
 const scoreValues = ['', 500, 1000, 1500, 2000, 2500, 3000];
+const audios = ['dog-barking.mp3', 'duck-falling.mp3', 'duck-hunt-intro.mp3', 'game-over.mp3', 'gun-shot.mp3', 'next-round.mp3', 'duck-quack.mp3'];
+let mouseX = mouseY = maxX = maxY = ducksKilled = score = 0;
+let bullet = miniDuck = null;
 let nrBullets = 3;
-let duckShoted, round = 1;
+let duckShoted = round = 1;
 let newDuck = null;
 let duckSpeed = 0.2;
+let audio = new Audio(`audios/${audios[2]}`);
 
 totalScoreDiv.innerHTML = localStorage.getItem("totalScore");
 
-audio.play();
+//audio.play();
 
 const startGame = async () => {
 
@@ -43,7 +43,7 @@ const startGame = async () => {
 
 const Duck = (uiRender) => {
 
-    let animation, shotedAnim, duckSprite = null;
+    let animation = shotedAnim = duckSprite = null;
 
     return ({
         create : function() {
