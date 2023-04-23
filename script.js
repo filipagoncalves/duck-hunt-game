@@ -35,12 +35,17 @@ const startGame = async () => {
     startScreen.style.display = 'none';
 
     await dog.animateDog();
+    game.verifyShot();
 
-    //while (nrBullets > 0) {
+    while (nrBullets > 0) {
         duck.create();
-        game.verifyShot();
-    //}
-    
+        await game.teste();
+        console.log('saí do teste');
+        await game.allAnimations();
+        await game.checkRoundResult();
+        game.replay();
+    }
+    game.gameOver();
 }
 
 const Duck = (uiRender) => {
@@ -205,37 +210,44 @@ const GameLogic = (uiRender, duck) => {
                 mouseX = event.clientX;
                 mouseY = event.clientY;
                 uiRender.removeBullet();
-
-                // check if the mouse coordinates are within the element's rectangle
+                
                 if (mouseX >= duckCoord.left && mouseX <= duckCoord.right
                     && mouseY >= duckCoord.top && mouseY <= duckCoord.bottom) {
-                    this.setInterfaceChanges();
-                    this.checkRoundResult();
-                    this.allAnimations();
-                    ducksKilled++;
-                    duckShoted++;
+
+                        this.setInterfaceChanges();
+                        //this.checkRoundResult();
+                        //this.allAnimations();
+                        ducksKilled++;
+                        duckShoted++;
                 } else {
                     nrBullets--;
                     console.log('You missed!');
+                    //this.teste(false);
                 }
                 //Verifica se ainda tem balas
-                this.verifyBullets();
+                //this.verifyBullets();
                 //Verifica se já foram feitas 10 jogadas
                 //this.checkRoundResult();
-            });     
+            });  
         },
 
         allAnimations: async function (){
+
             duck.stopAnimation();
             await duck.fallingAnimation();
             await uiRender.showDog(655, 5);
-            if(ducksKilled === 10){
+            
+            return new Promise((resolve) => {
+                console.log("step 4");
+                resolve();
+            });
+            /*if(ducksKilled === 10){
                 round++;
                 await uiRender.showRoundBox();
                 uiRender.updateRound();
-            }
-            uiRender.showBullet();
-            this.replay();
+            }*/
+            //uiRender.showBullet();
+            //this.replay();
         },
 
         setInterfaceChanges : function(left, top) {
@@ -245,16 +257,25 @@ const GameLogic = (uiRender, duck) => {
             body.style.pointerEvents = "none";
         },
 
-        verifyBullets : function() {
+        /*verifyBullets : function() {
             if (nrBullets === 0) this.gameOver();
-        },
+        },*/
 
-        checkRoundResult : function() {
+        checkRoundResult : async function() {
+            uiRender.showBullet();
             if (ducksKilled === 10) {
+                round++;
+                await uiRender.showRoundBox();
+                uiRender.updateRound();
+
                 ducksKilled = 0;
                 duckShoted = 2;
                 duckSpeed += 0.1;
             }
+            return new Promise((resolve) => {
+                console.log("step 4");
+                resolve();
+            });
         },
 
         gameOver : function() {
@@ -263,7 +284,7 @@ const GameLogic = (uiRender, duck) => {
         },
 
         replay : function () {
-            duck.create();
+            //duck.create();
             uiRender.blinkDuck();
             body.style.pointerEvents = "initial";
         }  
