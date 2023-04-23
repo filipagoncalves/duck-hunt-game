@@ -3,6 +3,7 @@ const main = document.getElementById("main");
 const mainScore = document.getElementById("main-score");
 const startScreen = document.getElementById("start-screen");
 const scoreDiv = document.getElementById("score");
+const totalScoreDiv = document.getElementById("total-score");
 const endRoundDiv = document.getElementById("end-round");
 const roundDiv = document.getElementById("round");
 const roundNrDiv = document.getElementById("round-nr");
@@ -11,14 +12,17 @@ const dogDiv = document.getElementById("dog");
 
 let mouseX, mouseY, maxX, maxY= 0;
 let bullet, miniDuck = null;
-const scoreValues = [500, 1000, 1500, 2000, 2500, 3000];
-let duckIsDead = false;
+const scoreValues = ['', 500, 1000, 1500, 2000, 2500, 3000];
 let nrBullets = 3;
 let duckShoted = 2;
 let ducksKilled = 0;
 let newDuck = null;
+let duckSpeed = 0.2;
 let round = 1;
 let score = 000000;
+
+const storedScore = localStorage.getItem('gameScore', score);
+
 
 const startGame = async () => {
 
@@ -31,8 +35,12 @@ const startGame = async () => {
     startScreen.style.display = 'none';
 
     await dog.animateDog();
-    duck.create();
-    game.verifyShot();
+
+    //while (nrBullets > 0) {
+        duck.create();
+        game.verifyShot();
+    //}
+    
 }
 
 const Duck = (uiRender) => {
@@ -60,7 +68,7 @@ const Duck = (uiRender) => {
         initialPosition : function () {
             const maxPositionX = window.innerWidth - newDuck.offsetWidth;
             
-            newDuck.style.top = '80%';
+            newDuck.style.top = '75%';
             newDuck.style.left = randomNumber(0, maxPositionX) + "px";
         },
 
@@ -71,7 +79,7 @@ const Duck = (uiRender) => {
             const duckX = newDuck.offsetLeft;
             const duckY = newDuck.offsetTop;
             const distance = Math.floor(Math.sqrt((valueX - duckX) ** 2 + (valueY - duckY) ** 2));
-            const duration = distance / 0.2;
+            const duration = distance / duckSpeed;
             
             this.checkCoordinates(duck, duckX, valueX);
             
@@ -188,10 +196,9 @@ const Dog = () => {
 
 const GameLogic = (uiRender, duck) => {
 
-    uiRender.blinkDuck();
-
     return ({
         verifyShot : function() {
+            uiRender.blinkDuck();
 
             body.addEventListener('click', (event) => {
                 const duckCoord = newDuck.getBoundingClientRect();
@@ -202,14 +209,11 @@ const GameLogic = (uiRender, duck) => {
                 // check if the mouse coordinates are within the element's rectangle
                 if (mouseX >= duckCoord.left && mouseX <= duckCoord.right
                     && mouseY >= duckCoord.top && mouseY <= duckCoord.bottom) {
-                    console.log('You killed a duck!');
-                    
                     this.setInterfaceChanges();
+                    this.checkRoundResult();
                     this.allAnimations();
                     ducksKilled++;
                     duckShoted++;
-                    round++;
-
                 } else {
                     nrBullets--;
                     console.log('You missed!');
@@ -217,7 +221,7 @@ const GameLogic = (uiRender, duck) => {
                 //Verifica se ainda tem balas
                 this.verifyBullets();
                 //Verifica se já foram feitas 10 jogadas
-                this.checkLevelResult();
+                //this.checkRoundResult();
             });     
         },
 
@@ -225,8 +229,11 @@ const GameLogic = (uiRender, duck) => {
             duck.stopAnimation();
             await duck.fallingAnimation();
             await uiRender.showDog(655, 5);
-            await uiRender.showRoundBox();
-            uiRender.updateRound();
+            if(ducksKilled === 10){
+                round++;
+                await uiRender.showRoundBox();
+                uiRender.updateRound();
+            }
             uiRender.showBullet();
             this.replay();
         },
@@ -242,8 +249,12 @@ const GameLogic = (uiRender, duck) => {
             if (nrBullets === 0) this.gameOver();
         },
 
-        checkLevelResult : function() {
-            if (ducksKilled === 10) uiRender.showRoundBox();
+        checkRoundResult : function() {
+            if (ducksKilled === 10) {
+                ducksKilled = 0;
+                duckShoted = 2;
+                duckSpeed += 0.1;
+            }
         },
 
         gameOver : function() {
@@ -294,7 +305,8 @@ const Interface = () => {
             mainScore.style.left = (mouseX - 40) + 'px';
 
             mainScore.innerHTML = scoreValues[round];
-            scoreDiv.innerHTML = score + scoreValues[round];
+            score += scoreValues[round];
+            scoreDiv.innerHTML = score;
         },
 
         hideScore : function() {

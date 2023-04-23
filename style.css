@@ -186,9 +186,9 @@ body{
     background-image: url('imgs/main-sprite.png');
     background-position: 0px -230px;
     position: absolute;
-    bottom: 100px;
-    left: 500px;
-    z-index: 0;
+    /*bottom: 100px;
+    left: 500px;*/
+    z-index: 10;
     width: 70px;
     height: 60px;
 }
