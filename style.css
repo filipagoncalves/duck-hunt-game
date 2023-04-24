@@ -4,7 +4,6 @@
 }
 
 body{
-    /*cursor: url('imgs/gun-pointer.png') 10 10, pointer;*/
     background-color: rgb(60 188 252);
     margin:0;
     padding:0;
@@ -78,17 +77,13 @@ body{
     border-color: white;
 }
 
-#round-text {
+#round-text, .title, #ducks {
     margin-bottom: 10px;
 }
 
 .title-box {
     width: 360px;
     text-align: center;
-}
-
-.title {
-    margin-bottom: 10px;
 }
 
 .game {
@@ -174,10 +169,6 @@ body{
     font-size: 17px;
 }
 
-#ducks {
-    margin-bottom: 10px;
-}
-
 .thumbDuck {
     background-image: url('imgs/main-sprite.png');
     background-position: -54px 582px;
@@ -200,7 +191,6 @@ body{
     width: 120px;
     height: 100px;
     visibility: visible;
-    /*animation: initialDog 3s;*/
 }
 
 .duck {
