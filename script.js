@@ -14,10 +14,9 @@ const dogDiv = document.getElementById("dog");
 const scoreValues = ['', 500, 1000, 1500, 2000, 2500, 3000];
 const audios = ['dog-barking.mp3', 'duck-falling.mp3', 'duck-hunt-intro.mp3', 'game-over.mp3', 'gun-shot.mp3', 'next-round.mp3', 'duck-quack.mp3'];
 let mouseX = mouseY = maxX = maxY = ducksKilled = score = 0;
-let bullet = miniDuck = null;
+let bullet = miniDuck = newDuck = null;
 let nrBullets = 3;
 let duckShoted = round = 1;
-let newDuck = null;
 let duckSpeed = 0.2;
 let audio = new Audio(`audios/${audios[2]}`);
 
